@@ -1,7 +1,5 @@
 from django.db import models
-from .type import Type
-from .ability import Ability
-from .generation import Generation
+from .taxonomies import Type, Ability, Generation
 
 
 class PokemonCache(models.Model):
