@@ -3,7 +3,9 @@ from django.db import models
 
 class EvolutionChainCache(models.Model):
     """
-    Minimal cache pre evolučný chain: držíme len IDčka v požadovanom poradí.
+    Minimal cache for evolution chains.
+
+    Stores only the ordered list of species IDs.
     """
     chain_id = models.PositiveIntegerField(unique=True)
     species_ids = models.JSONField(default=list, blank=True)
@@ -17,4 +19,5 @@ class EvolutionChainCache(models.Model):
             models.Index(fields=["fetched_at"]),
         ]
 
-    def __str__(self): return f"Chain #{self.chain_id}"
+    def __str__(self) -> str:
+        return f"Chain #{self.chain_id}"

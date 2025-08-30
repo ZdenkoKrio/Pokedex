@@ -3,8 +3,10 @@ from django.db import models
 
 class ApiResourceCache(models.Model):
     """
-    Generická DB cache pre PokeAPI URL.
-    Používa sa pre listy (pagination), type/ability listing, species… – všade tam, kde nemáme doménový model.
+    Generic DB cache for PokeAPI endpoints.
+
+    Stores raw payload + ETag/Last-Modified validators.
+    Used where no dedicated domain model exists.
     """
     url = models.URLField(unique=True)
     payload = models.JSONField()
@@ -14,5 +16,7 @@ class ApiResourceCache(models.Model):
     expires_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        indexes = [models.Index(fields=["fetched_at"]), models.Index(fields=["expires_at"])]
-        
+        indexes = [
+            models.Index(fields=["fetched_at"]),
+            models.Index(fields=["expires_at"]),
+        ]
