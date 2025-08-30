@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}#{{ p.pokeapi_id }} · {{ p.name|title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dex-container">
+  {% with primary=p.types.all.0 %}
+  {# ak príde ?sprite=classic, ber to ako default #}
+  {% with raw_mode=request.GET.sprite|default:"default" %}
+  {% with sprite_mode=raw_mode|lower %}
+  {% with sid=p.pokeapi_id|stringformat:"s" %}
+  {% with default="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"|add:sid|add:".png" %}
+  {% with shiny="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/"|add:sid|add:".png" %}
+  {% with animated="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/"|add:sid|add:".gif" %}
+  {% with artwork="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/"|add:sid|add:".png" %}
+
+  <div class="dex-card {% if primary %}type-{{ primary.slug }}{% else %}type-unknown{% endif %}">
+    <!-- Header -->
+    <div class="dex-header">
+      <div class="sprite-wrap">
+        {% if sprite_mode in "shiny" %}
+          <img class="sprite" src="{{ shiny }}" alt="{{ p.name }}" loading="lazy"
+               onerror="this.onerror=null; this.src='{{ default }}'">
+        {% elif sprite_mode in "animated" %}
+          <img class="sprite" src="{{ animated }}" alt="{{ p.name }}" loading="lazy"
+               onerror="this.onerror=null; this.src='{{ default }}'">
+        {% elif sprite_mode in "artwork" %}
+          <img class="sprite" src="{{ artwork }}" alt="{{ p.name }}" loading="lazy"
+               onerror="this.onerror=null; this.src='{{ default }}'">
+        {% else %}
+          <img class="sprite" src="{{ default }}" alt="{{ p.name }}" loading="lazy">
+        {% endif %}
+
+        <div class="switch" role="tablist" aria-label="Sprite set">
+          {# „classic“ link ostáva kvôli spätn. kompatibilite — mapuje sa na default #}
+          <a class="chip" href="?sprite=default"
+             aria-current="{% if sprite_mode in 'default,classic' %}true{% else %}false{% endif %}">Classic</a>
+          <a class="chip" href="?sprite=shiny"
+             aria-current="{% if sprite_mode == 'shiny' %}true{% else %}false{% endif %}">Shiny</a>
+          <a class="chip" href="?sprite=animated"
+             aria-current="{% if sprite_mode == 'animated' %}true{% else %}false{% endif %}">Animated</a>
+          <a class="chip" href="?sprite=artwork"
+             aria-current="{% if sprite_mode == 'artwork' %}true{% else %}false{% endif %}">Artwork</a>
+        </div>
+      </div>
+
+      <div>
+        <h1 class="dex-title">#{{ p.pokeapi_id }} · {{ p.name|title }}</h1>
+        <div class="dex-sub">
+          Height: <b>{{ p.height }}</b> &nbsp;•&nbsp; Weight: <b>{{ p.weight }}</b>
+        </div>
+        <div class="type-badges">
+          {% for t in p.types.all %}
+            <span class="type-badge">{{ t.name }}</span>
+          {% empty %}
+            <span class="type-badge">—</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="font-size:40px;font-weight:900;opacity:.15;align-self:start;">{{ p.pokeapi_id }}</div>
+    </div>
+
+    <!-- Body -->
+    <div class="dex-body">
+      <div class="panel">
+        <h3 style="margin:0 0 10px 0;">Base Stats</h3>
+        <div class="stats">
+          {% for k, v in p.base_stats.items %}
+            <div class="stat-row">
+              <div class="stat-name">{{ k|upper }}</div>
+              <div class="stat-bar" style="--val: {{ v|default:0 }};"></div>
+              <div class="stat-num">{{ v }}</div>
+            </div>
+          {% empty %}
+            <p>—</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin:0 0 10px 0;">Info</h3>
+        <div class="meta">
+          <div class="item">
+            <div class="label">Abilities</div>
+            <div class="value">
+              {% for a in p.abilities.all %}
+                {{ a.name }}{% if not forloop.last %}, {% endif %}
+              {% empty %} — {% endfor %}
+            </div>
+          </div>
+          <div class="item">
+            <div class="label">Types</div>
+            <div class="value">
+              {% for t in p.types.all %}
+                {{ t.name }}{% if not forloop.last %}, {% endif %}
+              {% empty %} — {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if evolution_chain and evolution_chain|length %}
+      <div class="evo">
+        <div class="evo-title">Evolution Chain</div>
+        <div class="evo-list">
+          {% for e in evolution_chain %}
+            <a class="evo-item" href="{% url 'pokemon:pokemon_detail' e.id %}">
+              <img class="evo-sprite"
+                   src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ e.id }}.png"
+                   alt="{{ e.name }}" loading="lazy">
+              <div class="evo-name">{{ e.name|title }}</div>
+              <div class="evo-id">#{{ e.id }}</div>
+            </a>
+            {% if not forloop.last %}<div class="arrow" aria-hidden="true">→</div>{% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  {% endwith %}{% endwith %}{% endwith %}{% endwith %}
+  {% endwith %}{% endwith %}{% endwith %}{% endwith %}
+</div>
+{% endblock %}

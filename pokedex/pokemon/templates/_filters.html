@@ -1,0 +1,58 @@
+
+<div class="filter-card">
+  <form method="get" class="filters">
+    <div class="f-group">
+      <label class="f-label" for="{{ form.q.id_for_label }}">🔎 Search</label>
+      {{ form.q }}
+      {% if form.q.help_text %}<small class="hint">{{ form.q.help_text }}</small>{% endif %}
+    </div>
+
+    <div class="f-group">
+      <label class="f-label" for="{{ form.type.id_for_label }}">🌀 Type</label>
+      {{ form.type }}
+    </div>
+
+    <div class="f-group">
+      <label class="f-label" for="{{ form.ability.id_for_label }}">✨ Ability</label>
+      {{ form.ability }}
+    </div>
+
+    <div class="f-group">
+      <label class="f-label" for="{{ form.min_weight.id_for_label }}">⚖️ Min weight</label>
+      {{ form.min_weight }}
+      {% if form.min_weight.help_text %}<small class="hint">{{ form.min_weight.help_text }}</small>{% endif %}
+    </div>
+
+    <div class="f-group">
+      <label class="f-label" for="{{ form.max_weight.id_for_label }}">⚖️ Max weight</label>
+      {{ form.max_weight }}
+      {% if form.max_weight.help_text %}<small class="hint">{{ form.max_weight.help_text }}</small>{% endif %}
+    </div>
+
+
+<div class="f-group">
+  <label class="f-label" for="{{ form.generation.id_for_label }}">📜 Generation</label>
+  {{ form.generation }}
+</div>
+
+<div class="f-group">
+  <label class="f-label" for="{{ form.legendary.id_for_label }}">🌟 Legendary</label>
+  {{ form.legendary }}
+</div>
+
+<div class="f-group">
+  <label class="f-label" for="{{ form.mythical.id_for_label }}">🪄 Mythical</label>
+  {{ form.mythical }}
+</div>
+
+    <div class="f-group">
+      <label class="f-label" style="opacity:0;">&nbsp;</label>
+      <button type="submit" class="btn-primary"><span class="ico">🎯</span> Filter</button>
+    </div>
+
+    <div class="f-group">
+      <label class="f-label" style="opacity:0;">&nbsp;</label>
+      <a href="." class="btn-secondary"><span class="ico">🧹</span> Reset</a>
+    </div>
+  </form>
+</div>

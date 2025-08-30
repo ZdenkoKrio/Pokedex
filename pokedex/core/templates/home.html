@@ -17,10 +17,10 @@
     </form>
 
     <div class="cta">
-      <a class="btn-cta" href="">📖 Open PokéList</a>
+      <a class="btn-cta" href="{% url 'pokemon:pokemon_list' %}">📖 Open PokéList</a>
       <a class="btn-ghost" href="{% url 'about' %}">ℹ️ About this project</a>
-      <a class="btn-ghost" href="">⭐ Legendary</a>
-      <a class="btn-ghost" href="">✨ Mythical</a>
+        <a class="btn-ghost" href="{% url 'pokemon:pokemon_list' %}?legendary=on">⭐ Legendary</a>
+      <a class="btn-ghost" href="{% url 'pokemon:pokemon_list' %}?mythical=on">✨ Mythical</a>
     </div>
   </div>
   <div>

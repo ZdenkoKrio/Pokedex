@@ -4,6 +4,11 @@
      aria-current="{% if request.resolver_match.url_name == 'home' %}page{% else %}false{% endif %}">
      🏠 Home
   </a>
+    <a href="{% url 'pokemon:pokemon_list' %}"
+     class="nav-link"
+     aria-current="{% if 'pokemon' in request.resolver_match.namespace %}page{% else %}false{% endif %}">
+     📖 PokéList
+  </a>
   <a href="{% url 'about' %}"
      class="nav-link"
      aria-current="{% if request.resolver_match.url_name == 'about' %}page{% else %}false{% endif %}">
