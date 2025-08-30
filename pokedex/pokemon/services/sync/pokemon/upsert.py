@@ -24,6 +24,7 @@ def _existing_ids_for(model, slugs: Sequence[str]) -> Tuple[List[int], List[str]
     """
     if not slugs:
         return [], []
+
     rows = model.objects.filter(slug__in=slugs).values_list("id", "slug")
     found_ids = [rid for rid, _ in rows]
     found_slugs = {s for _, s in rows}

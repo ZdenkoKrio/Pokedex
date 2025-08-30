@@ -1,20 +1,25 @@
 from __future__ import annotations
 """
-SyncRunner — small orchestrator for multi-pass full Pokédex syncs.
+SyncRunner — generic, small orchestrator for multi-pass bulk syncs.
 
 Responsibilities
-- Call `sync_all_pokemon` repeatedly.
-- Tweak params between runs (fewer workers, more sleep).
+- Call a provided `run_fn(**kwargs) -> dict` repeatedly (multi-pass).
+- Tweak params between runs (fewer workers, slightly more sleep).
 - Stop early when failures drop under a target.
 - Aggregate simple totals across runs.
 
-No hard dependency on Django; an optional `logger` (e.g. `self.stdout`)
-may be provided for messages and warnings.
+Generic knobs
+- `run_fn`: the concrete bulk sync function (e.g. `sync_all_pokemon`, `sync_all_evo_chains`)
+- `success_key`: which key in the returned stats represents "successful items"
+  (e.g. "synced" for Pokémon, "ok" for evo-chains)
+- `run_extra_kwargs`: extra kwargs forwarded to `run_fn` on each pass
+  (e.g. a `logger` callback)
+
+No hard dependency on Django; you may pass a `logger` (e.g. `self.stdout`) for messages.
 """
 
 import time
-from typing import Optional, Dict, Callable, Tuple, Protocol
-from pokemon.services.sync_all import sync_all_pokemon
+from typing import Optional, Dict, Callable, Tuple, Protocol, Any
 
 
 class _LoggerLike(Protocol):
@@ -29,37 +34,31 @@ class SyncRunner:
     """
     Run multiple sync passes until failures are low enough.
 
-    Each pass delegates to `sync_all_pokemon`, optionally reporting progress
-    via a callback. Between passes, workers are reduced slightly and a small
-    delay is added to ease transient API failures.
+    Each pass calls the injected `run_fn`, optionally reporting progress via a
+    callback. Between passes, workers are slightly reduced and a short delay is
+    added to help with transient public API issues.
 
     Parameters
     ----------
-    workers : int
-        Initial parallel worker count for HTTP work.
-    batch_size : int
-        Index page size used to enumerate IDs.
-    base_sleep : float
-        Base inter-batch sleep per run (seconds).
-    refresh_all : bool
-        If True, refresh also existing records; otherwise fetch only missing.
-    max_runs : int
-        Upper bound on how many passes to attempt.
-    target_fail : int
-        Stop early once `failed <= target_fail`.
-    progress : Callable[[dict], None] | None
-        Optional callback receiving progress dicts from the service.
-    logger : _LoggerLike | None
-        Optional sink for log lines (supports `.write()` or `.warning()`, etc.).
+    run_fn : Callable[..., dict]
+        Bulk sync function; must return a dict with at least keys:
+        - 'failed' (int), and a success counter at `success_key`.
+    success_key : str
+        Name of the success counter in the returned stats (e.g. 'synced', 'ok').
+    run_extra_kwargs : dict | None
+        Extra kwargs forwarded to `run_fn` on each pass (e.g., {'logger': ...}).
 
-    Results (from `run()`)
-    ----------------------
-    dict with keys:
-      runs, total_synced, total_skipped, last_failed
+    workers, batch_size, base_sleep, refresh_all, max_runs, target_fail, progress, logger
+        Same semantics as before; these are used to build per-pass arguments.
     """
 
     def __init__(
         self,
+        *,
+        run_fn: Callable[..., Dict[str, Any]],
+        success_key: str,
+        run_extra_kwargs: Optional[Dict[str, Any]] = None,
+
         workers: int,
         batch_size: int,
         base_sleep: float,
@@ -69,6 +68,10 @@ class SyncRunner:
         progress: Optional[Callable[[Dict], None]] = None,
         logger: Optional[_LoggerLike] = None,
     ):
+        self.run_fn = run_fn
+        self.success_key = success_key
+        self.run_extra_kwargs = dict(run_extra_kwargs or {})
+
         self.base_workers = workers
         self.batch_size = batch_size
         self.base_sleep = base_sleep
@@ -100,19 +103,17 @@ class SyncRunner:
         """Emit a log line if `logger` is present."""
         if not self.log:
             return
-
-        if hasattr(self.log, "write"):            # e.g. Django's self.stdout
+        if hasattr(self.log, "write"):            # e.g., Django's self.stdout
             self.log.write(text + "\n")
-
-        elif hasattr(self.log, level):            # e.g. logger.warning(...)
+        elif hasattr(self.log, level):            # e.g., logger.warning(...)
             getattr(self.log, level)(text)
 
-    def run(self) -> Dict:
+    def run(self) -> Dict[str, Any]:
         """
         Execute up to `max_runs` passes with adaptive throttling.
 
         Loop:
-          1) call `sync_all_pokemon` with current params
+          1) call `run_fn` with current params
           2) aggregate totals
           3) stop if failures are under target; otherwise short sleep
 
@@ -127,26 +128,32 @@ class SyncRunner:
                 f"sleep={sleep_between:.1f}, refresh_all={self.refresh_all}"
             )
 
-            stats = sync_all_pokemon(
-                workers=workers,
-                batch_size=self.batch_size,
-                sleep_between_batches=sleep_between,
-                only_missing=not self.refresh_all,
-                progress=self.progress,
-                # Forward taxonomy warnings (missing type/ability/generation) as warnings:
-                logger=(lambda s: self._log(s, "warning")),
-            )
+            # Build per-pass kwargs for the service
+            kwargs = {
+                "workers": workers,
+                "batch_size": self.batch_size,
+                "sleep_between_batches": sleep_between,
+                "only_missing": (not self.refresh_all),
+                "progress": self.progress,
+            }
+            kwargs.update(self.run_extra_kwargs)
+
+            stats = self.run_fn(**kwargs)
 
             # Aggregate per-run numbers
-            self.total_synced += int(stats.get("synced", 0))
-            self.total_skipped += int(stats.get("skipped", 0))
-            self.last_failed = int(stats.get("failed", 0))
+            success = int(stats.get(self.success_key, 0))
+            skipped = int(stats.get("skipped", 0))
+            failed = int(stats.get("failed", 0))
+
+            self.total_synced += success
+            self.total_skipped += skipped
+            self.last_failed = failed
 
             # Per-run summary
             self._log(
                 f"[run {run}] total={stats.get('total', 0)} "
-                f"synced={stats.get('synced', 0)} skipped={stats.get('skipped', 0)} "
-                f"failed={stats.get('failed', 0)} elapsed={stats.get('elapsed', 0.0)}s"
+                f"{self.success_key}={success} skipped={skipped} "
+                f"failed={failed} elapsed={stats.get('elapsed', 0.0)}s"
             )
 
             if self.last_failed <= self.target_fail:
