@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home · Pokédex{% endblock %}
+
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/page-home.css' %}">{% endblock %}
+
+{% block content %}
+<section class="hero" role="region" aria-label="Pokédex hero">
+  <div>
+    <h1>Welcome to the Django Pokédex</h1>
+    <p class="lead">Browse all Pokémon, filter by type/ability/generation, view evolution chains, and compare base stats.</p>
+
+    <form class="quick-search" action="" method="get">
+      <input name="q" type="text" placeholder="Search Pokémon by name or ID (e.g. pikachu or 25)" aria-label="Search Pokémon">
+      <button type="submit">Search</button>
+    </form>
+
+    <div class="cta">
+      <a class="btn-cta" href="">📖 Open PokéList</a>
+      <a class="btn-ghost" href="{% url 'about' %}">ℹ️ About this project</a>
+      <a class="btn-ghost" href="">⭐ Legendary</a>
+      <a class="btn-ghost" href="">✨ Mythical</a>
+    </div>
+  </div>
+  <div>
+    <img class="hero-img"
+         src="https://deadline.com/wp-content/uploads/2024/09/Pokemon-Mini-Series-Aim-to-Be-a-Pokemon-Master-Ep-1-11.jpg?w=1200"
+         alt="Pokémon world collage" loading="lazy">
+  </div>
+</section>
+
+<section class="features" aria-label="Highlights">
+  <div class="card"><h3>🎯 Powerful Filters</h3><p>Type, ability, weight, generation — mix & match to narrow your hunt.</p></div>
+  <div class="card"><h3>🧬 Evolution Chains</h3><p>Precomputed chains for fast detail pages, no extra API calls on view.</p></div>
+  <div class="card"><h3>📊 Stat Visualization</h3><p>Clean progress bars for base stats; perfect for quick comparisons.</p></div>
+</section>
+
+<p class="kudos">Data courtesy of <a href="https://pokeapi.co/" target="_blank" rel="noreferrer">PokeAPI</a>. Sprites &amp; artwork from official community resources.</p>
+{% endblock %}

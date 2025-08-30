@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About · Pokédex{% endblock %}
+
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/page-about.css' %}">{% endblock %}
+
+{% block content %}
+<div class="about-wrap">
+  <section class="hero">
+    <h1>About this Django Pokédex</h1>
+    <p>Minimal, cleanly structured app that integrates the PokeAPI, preloads data into a local cache, and renders fast SSR pages with rich filters &amp; evolution chains.</p>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h3>✨ Highlights</h3>
+      <ul class="list">
+        <li class="item">
+          <span class="ico">⚡</span>
+          <div>
+            <strong>DB-first performance</strong><br>
+            <span class="muted">Bulk sync do lokálnej DB (Pokémoni + evo chains), detail bez externých volaní.</span>
+          </div>
+        </li>
+        <li class="item">
+          <span class="ico">🧭</span>
+          <div>
+            <strong>Bohaté filtre</strong><br>
+            <span class="muted">Typ, ability, váha, generácia, legendárny/mytický…</span>
+          </div>
+        </li>
+        <li class="item">
+          <span class="ico">🧬</span>
+          <div>
+            <strong>Evolučné reťazce</strong><br>
+            <span class="muted">Predpočítané <em>species_ids</em> pre rýchle renderovanie a prekliky.</span>
+          </div>
+        </li>
+        <li class="item">
+          <span class="ico">📊</span>
+          <div>
+            <strong>Čistý kód</strong><br>
+            <span class="muted">Oddelené services/selectors, management commands, progres bar pre sync.</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>🧱 Tech Stack</h3>
+      <div class="badges" aria-label="Tech badges">
+        <span class="badge brand">Django</span>
+        <span class="badge">Django ORM</span>
+        <span class="badge">Requests</span>
+        <span class="badge">PokeAPI</span>
+        <span class="badge">ThreadPool</span>
+        <span class="badge">DB Cache</span>
+      </div>
+      <hr>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>📐 Architecture (short)</h3>
+    <ul class="list">
+      <li class="item"><span class="ico">📦</span><div><strong>services.api</strong> – HTTP + DB cache (ETag/TTL) & URL builder</div></li>
+      <li class="item"><span class="ico">🔁</span><div><strong>services.sync*</strong> – bulk preload &amp; resilient retries</div></li>
+      <li class="item"><span class="ico">🧩</span><div><strong>selectors</strong> – čisté ORM dotazy pre view/template</div></li>
+      <li class="item"><span class="ico">🗃️</span><div><strong>models.*</strong> – tenké cache tabuľky + taxonómie</div></li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h3>🔗 Links</h3>
+    <div class="links">
+      <a class="btn" href="">📖 Open PokéList</a>
+      <a class="btn" href="https://pokeapi.co/" target="_blank" rel="noreferrer">🌐 PokeAPI</a>
+      <a class="btn" href="{% url 'about' %}#architecture">🧭 Architecture</a>
+    </div>
+  </section>
+
+  <p class="muted">Sprites &amp; data: © respective owners / community resources. Built for educational purposes.</p>
+</div>
+{% endblock %}

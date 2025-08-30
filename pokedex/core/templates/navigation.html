@@ -1,0 +1,12 @@
+<nav class="nav-bar">
+  <a href="{% url 'home' %}"
+     class="nav-link"
+     aria-current="{% if request.resolver_match.url_name == 'home' %}page{% else %}false{% endif %}">
+     🏠 Home
+  </a>
+  <a href="{% url 'about' %}"
+     class="nav-link"
+     aria-current="{% if request.resolver_match.url_name == 'about' %}page{% else %}false{% endif %}">
+     ℹ️ About
+  </a>
+</nav>

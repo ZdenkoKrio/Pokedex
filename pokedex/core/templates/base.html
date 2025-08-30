@@ -1,0 +1,57 @@
+{% load static %}
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Pokédex{% endblock %}</title>
+
+  <!-- Set theme ASAP from cookie to avoid flash -->
+  <script>
+    (function () {
+      try {
+        var m = document.cookie.match(/(?:^|; )theme=([^;]+)/);
+        var theme = m ? decodeURIComponent(m[1]) : '';
+        if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          theme = 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme || 'light');
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="https://unpkg.com/milligram/dist/milligram.min.css">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <header class="appbar">
+    <div class="appbar-inner">
+      <a class="brand" href="">
+        <div class="brand-mark">⚡</div>
+        <div class="brand-title">Pokédex</div>
+      </a>
+      <nav class="nav" aria-label="Main">
+        {% include "navigation.html" %}
+      </nav>
+      <!-- Theme toggle -->
+      <button class="btn" type="button" id="theme-toggle" onclick="__toggleTheme()" title="Toggle theme">🌓 Theme</button>
+    </div>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container" style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+      <div>Made with ❤️ &amp; Django · PokeAPI</div>
+      <div class="muted">Tip: press <kbd>/</kbd> to focus search</div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/theme.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
