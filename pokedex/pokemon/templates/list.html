@@ -42,8 +42,8 @@
 {% if is_paginated %}
   <nav class="pager" role="navigation" aria-label="Pagination">
     {% if page_obj.has_previous %}
-      <a class="btn" href="?page=1">« First</a>
-      <a class="btn" href="?page={{ page_obj.previous_page_number }}">‹ Prev</a>
+      <a class="btn" href="?{% if base_qs %}{{ base_qs }}&{% endif %}page=1">« First</a>
+      <a class="btn" href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ page_obj.previous_page_number }}">‹ Prev</a>
     {% else %}
       <span class="btn is-disabled" aria-disabled="true">« First</span>
       <span class="btn is-disabled" aria-disabled="true">‹ Prev</span>
@@ -52,8 +52,8 @@
     <span>Page <strong>{{ page_obj.number }}</strong> / {{ page_obj.paginator.num_pages }}</span>
 
     {% if page_obj.has_next %}
-      <a class="btn" href="?page={{ page_obj.next_page_number }}">Next ›</a>
-      <a class="btn" href="?page={{ page_obj.paginator.num_pages }}">Last »</a>
+      <a class="btn" href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ page_obj.next_page_number }}">Next ›</a>
+      <a class="btn" href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Last »</a>
     {% else %}
       <span class="btn is-disabled" aria-disabled="true">Next ›</span>
       <span class="btn is-disabled" aria-disabled="true">Last »</span>

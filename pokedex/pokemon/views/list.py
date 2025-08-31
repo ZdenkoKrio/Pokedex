@@ -22,9 +22,9 @@ class PokemonListView(TemplateView):
         form.is_valid()
         cd = form.cleaned_data
 
-        type_obj = cd.get("type")
+        type_obj    = cd.get("type")
         ability_obj = cd.get("ability")
-        gen_obj = cd.get("generation")
+        gen_obj     = cd.get("generation")
 
         qs = list_pokemon(
             search=cd.get("q"),
@@ -49,6 +49,10 @@ class PokemonListView(TemplateView):
         except (EmptyPage, PageNotAnInteger):
             page_obj = paginator.page(1)
 
+        params = request.GET.copy()
+        params.pop("page", None)
+        base_qs = params.urlencode()
+
         ctx = {
             "form": form,
             "items": page_obj.object_list,
@@ -56,5 +60,6 @@ class PokemonListView(TemplateView):
             "page_obj": page_obj,
             "paginator": paginator,
             "total": paginator.count,
+            "base_qs": base_qs,
         }
         return render(request, self.template_name, ctx)
