@@ -14,4 +14,7 @@
      aria-current="{% if request.resolver_match.url_name == 'about' %}page{% else %}false{% endif %}">
      ℹ️ About
   </a>
+     <a href="{% url 'pokemon:compare' %}" class="nav-link">
+    Compare <span id="cmp-badge" class="badge">{{ compare_count }}</span>
+  </a>
 </nav>

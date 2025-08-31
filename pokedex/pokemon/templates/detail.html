@@ -10,7 +10,6 @@
 {% block content %}
 <div class="dex-container">
   {% with primary=p.types.all.0 %}
-  {# ak príde ?sprite=classic, ber to ako default #}
   {% with raw_mode=request.GET.sprite|default:"default" %}
   {% with sprite_mode=raw_mode|lower %}
   {% with sid=p.pokeapi_id|stringformat:"s" %}
@@ -20,16 +19,15 @@
   {% with artwork="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/"|add:sid|add:".png" %}
 
   <div class="dex-card {% if primary %}type-{{ primary.slug }}{% else %}type-unknown{% endif %}">
-    <!-- Header -->
     <div class="dex-header">
       <div class="sprite-wrap">
-        {% if sprite_mode in "shiny" %}
+        {% if sprite_mode == "shiny" %}
           <img class="sprite" src="{{ shiny }}" alt="{{ p.name }}" loading="lazy"
                onerror="this.onerror=null; this.src='{{ default }}'">
-        {% elif sprite_mode in "animated" %}
+        {% elif sprite_mode == "animated" %}
           <img class="sprite" src="{{ animated }}" alt="{{ p.name }}" loading="lazy"
                onerror="this.onerror=null; this.src='{{ default }}'">
-        {% elif sprite_mode in "artwork" %}
+        {% elif sprite_mode == "artwork" %}
           <img class="sprite" src="{{ artwork }}" alt="{{ p.name }}" loading="lazy"
                onerror="this.onerror=null; this.src='{{ default }}'">
         {% else %}
@@ -37,9 +35,8 @@
         {% endif %}
 
         <div class="switch" role="tablist" aria-label="Sprite set">
-          {# „classic“ link ostáva kvôli spätn. kompatibilite — mapuje sa na default #}
           <a class="chip" href="?sprite=default"
-             aria-current="{% if sprite_mode in 'default,classic' %}true{% else %}false{% endif %}">Classic</a>
+             aria-current="{% if sprite_mode == 'default' or sprite_mode == 'classic' %}true{% else %}false{% endif %}">Classic</a>
           <a class="chip" href="?sprite=shiny"
              aria-current="{% if sprite_mode == 'shiny' %}true{% else %}false{% endif %}">Shiny</a>
           <a class="chip" href="?sprite=animated"
@@ -47,6 +44,14 @@
           <a class="chip" href="?sprite=artwork"
              aria-current="{% if sprite_mode == 'artwork' %}true{% else %}false{% endif %}">Artwork</a>
         </div>
+
+        <div class="actions" style="margin-top:8px; display:flex; gap:8px;">
+  <button
+    class="btn-secondary js-cmp"
+    data-id="{{ p.pokeapi_id }}"
+    type="button">Compare</button>
+  <a class="btn-primary" href="{% url 'pokemon:compare' %}">Open comparison</a>
+</div>
       </div>
 
       <div>
@@ -66,7 +71,6 @@
       <div style="font-size:40px;font-weight:900;opacity:.15;align-self:start;">{{ p.pokeapi_id }}</div>
     </div>
 
-    <!-- Body -->
     <div class="dex-body">
       <div class="panel">
         <h3 style="margin:0 0 10px 0;">Base Stats</h3>
@@ -128,4 +132,8 @@
   {% endwith %}{% endwith %}{% endwith %}{% endwith %}
   {% endwith %}{% endwith %}{% endwith %}{% endwith %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module" src="{% static 'js/compare-buttons.js' %}"></script>
 {% endblock %}

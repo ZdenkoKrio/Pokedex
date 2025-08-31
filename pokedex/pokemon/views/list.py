@@ -14,7 +14,7 @@ def _tri_state(val) -> Optional[bool]:
 
 
 class PokemonListView(TemplateView):
-    template_name = "list.html"   
+    template_name = "list.html"
     PER_PAGE = 50
 
     def get(self, request, *args, **kwargs):

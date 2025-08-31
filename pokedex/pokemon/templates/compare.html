@@ -1,0 +1,98 @@
+{# templates/pokemon/compare.html #}
+{% extends "base.html" %}
+{% load static %}
+{% load dict_extras %}
+
+{% block title %}Compare{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/compare.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="cmp-container">
+  <h1>Comparison</h1>
+
+  {% if not items %}
+    <p>Košík porovnania je prázdny. Choď na <a href="{% url 'pokemon:pokemon_list' %}">Pokédex</a> a pridaj pokémonov.</p>
+  {% else %}
+    <div class="cmp-grid">
+      {% for it in items %}
+        <div class="cmp-card">
+          <a class="cmp-link" href="{% url 'pokemon:pokemon_detail' it.id %}" aria-label="{{ it.name|title }}">
+            <img class="cmp-sprite" src="{{ it.sprite }}" alt="{{ it.name }}">
+            <div class="cmp-name">#{{ it.id }} · {{ it.name|title }}</div>
+          </a>
+
+          <div class="cmp-types">
+            {% for t in it.types %}
+              <span class="type type-{{ t }}">{{ t }}</span>
+            {% empty %}
+              <span class="type">—</span>
+            {% endfor %}
+          </div>
+
+          <div class="cmp-meta">
+            <span>H: <b>{{ it.height }}</b></span>
+            <span>W: <b>{{ it.weight }}</b></span>
+          </div>
+
+          <button
+            class="btn-secondary js-cmp"
+            data-id="{{ it.id }}"
+            data-toggle-url="{% url 'pokemon:compare_toggle' it.id %}"
+            type="button">Toggle</button>
+        </div>
+      {% endfor %}
+    </div>
+
+    <h2 style="margin-top:1rem;">Base stats</h2>
+    <div class="table-wrap">
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Pokémon</th>
+            {% for k in stats_keys %}
+              <th>{{ k|upper }}</th>
+            {% endfor %}
+            <th>Sum</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for it in items %}
+            <tr>
+              <td>
+                <a href="{% url 'pokemon:pokemon_detail' it.id %}">#{{ it.id }} {{ it.name|title }}</a>
+              </td>
+
+              {% for k in stats_keys %}
+                <td>{{ it.stats|get:k|default:"0" }}</td>
+              {% endfor %}
+
+              {% with total=0 %}
+                {% for k in stats_keys %}
+                  {% with v=it.stats|get:k|default:0 %}
+                    {% with total=total|add:v %}{% endwith %}
+                  {% endwith %}
+                {% endfor %}
+                <td>{{ total }}</td>
+              {% endwith %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <h2 style="margin-top:1rem;">Radar chart</h2>
+    <canvas id="cmpChart" width="800" height="500"></canvas>
+
+    {{ items|json_script:"cmp-data" }}
+    {{ stats_keys|json_script:"cmp-keys" }}
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script type="module" src="{% static 'js/compare-page.js' %}"></script>
+{% endblock %}

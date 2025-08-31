@@ -16,8 +16,8 @@
 <div class="grid">
   {% for p in items %}
     {% with first_type=p.types.all|first %}
-      <a class="card-link" href="{% url 'pokemon:pokemon_detail' p.pokeapi_id %}" aria-label="{{ p.name|title }}">
-        <div class="card {% if first_type %}type-{{ first_type.slug }}{% endif %}">
+      <div class="card {% if first_type %}type-{{ first_type.slug }}{% endif %}">
+        <a class="card-link" href="{% url 'pokemon:pokemon_detail' p.pokeapi_id %}" aria-label="{{ p.name|title }}">
           <img
             src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ p.pokeapi_id }}.png"
             alt="{{ p.name }}" loading="lazy">
@@ -28,8 +28,11 @@
               <span class="type type-{{ t.slug }}">{{ t.name }}</span>
             {% endfor %}
           </div>
+        </a>
+        <div class="row-actions" style="margin-top:.5rem;">
+          <button class="btn-secondary js-cmp" data-id="{{ p.pokeapi_id }}" type="button">Compare</button>
         </div>
-      </a>
+      </div>
     {% endwith %}
   {% empty %}
     <p>Žiadne výsledky pre zvolený filter.</p>
@@ -57,4 +60,8 @@
     {% endif %}
   </nav>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script type="module" src="{% static 'js/compare-buttons.js' %}"></script>
 {% endblock %}
