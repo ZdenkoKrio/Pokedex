@@ -45,6 +45,18 @@
   {{ form.mythical }}
 </div>
 
+      <div class="f-group">
+  <label class="f-label" for="id_only_fav">❤️ Only favorites</label>
+  <label style="display:flex;align-items:center;gap:.5rem;">
+    <input id="id_only_fav" type="checkbox" name="only_fav" value="1"
+           {% if request.GET.only_fav == '1' %}checked{% endif %}>
+    Show only my favorite Pokémon
+  </label>
+  {% if not request.user.is_authenticated %}
+    <small class="hint">Log in to use favorites.</small>
+  {% endif %}
+</div>
+
     <div class="f-group">
       <label class="f-label" style="opacity:0;">&nbsp;</label>
       <button type="submit" class="btn-primary"><span class="ico">🎯</span> Filter</button>

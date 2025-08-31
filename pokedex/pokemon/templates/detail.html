@@ -46,12 +46,18 @@
         </div>
 
         <div class="actions" style="margin-top:8px; display:flex; gap:8px;">
-  <button
-    class="btn-secondary js-cmp"
-    data-id="{{ p.pokeapi_id }}"
-    type="button">Compare</button>
-  <a class="btn-primary" href="{% url 'pokemon:compare' %}">Open comparison</a>
-</div>
+          <button class="btn-secondary js-cmp" data-id="{{ p.pokeapi_id }}" type="button">Compare</button>
+          <a class="btn-primary" href="{% url 'pokemon:compare' %}">Open comparison</a>
+
+          {% if request.user.is_authenticated %}
+            <button
+              class="btn-secondary js-fav {% if is_fav %}is-active{% endif %}"
+              data-id="{{ p.pokeapi_id }}"
+              type="button">★ Favorite</button>
+          {% else %}
+            <a class="btn-secondary" href="{% url 'accounts:login' %}?next={{ request.path }}">★ Favorite</a>
+          {% endif %}
+        </div>
       </div>
 
       <div>
@@ -135,5 +141,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<script type="module" src="{% static 'js/compare-buttons.js' %}"></script>
+  <script type="module" src="{% static 'js/compare-buttons.js' %}"></script>
+  <script type="module" src="{% static 'js/favorites-buttons.js' %}"></script>
 {% endblock %}

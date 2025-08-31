@@ -1,3 +1,4 @@
+# pokemon/views/detail.py
 from __future__ import annotations
 from django.http import Http404
 from django.shortcuts import render
@@ -6,6 +7,8 @@ from django.views.generic import TemplateView
 from pokemon.models import PokemonCache, EvolutionChainCache
 from pokemon.services.sync.evo.lookup import ensure_chain_for_species
 from pokemon.selectors import evo_display_from_ids
+
+from favorites.models import Favorite  # import z novej app favorites
 
 
 class PokemonDetailView(TemplateView):
@@ -21,8 +24,8 @@ class PokemonDetailView(TemplateView):
         if not p:
             raise Http404("Pokémon not found in local cache.")
 
+        # Evolution chain (bez zmeny)
         chain = None
-
         if getattr(p, "evolution_chain_id", None):
             chain = EvolutionChainCache.objects.filter(chain_id=p.evolution_chain_id).first()
 
@@ -42,5 +45,13 @@ class PokemonDetailView(TemplateView):
             species_ids = list(chain.species_ids or [])
             evo_list = evo_display_from_ids(species_ids, ensure_missing=True)
 
-        ctx = {"p": p, "evolution_chain": evo_list}
+        # Favorites flag — používaj Favorite.pokemon_id
+        is_fav = False
+        if request.user.is_authenticated:
+            is_fav = Favorite.objects.filter(
+                user=request.user,
+                pokemon_id=p.pokeapi_id,   # <-- kľúčová oprava
+            ).exists()
+
+        ctx = {"p": p, "evolution_chain": evo_list, "is_fav": is_fav}
         return render(request, self.template_name, ctx)

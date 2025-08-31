@@ -1,15 +1,22 @@
 from __future__ import annotations
 from typing import Optional
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.views.generic import TemplateView
+
 from pokemon.forms import PokemonFilterForm
 from pokemon.selectors import list_pokemon
 
+# ⬇️ PRIDAJ: ak máš app favorites podľa návrhu
+from favorites.models import Favorite
+
 
 def _tri_state(val) -> Optional[bool]:
-    if val in (True, "true", "yes", "1", 1): return True
-    if val in (False, "false", "no", "0", 0): return False
+    if val in (True, "true", "yes", "1", 1):
+        return True
+    if val in (False, "false", "no", "0", 0):
+        return False
     return None
 
 
@@ -37,6 +44,14 @@ class PokemonListView(TemplateView):
             mythical=_tri_state(cd.get("mythical")),
         )
 
+        # ---------- Only favorites (ak je prihlásený a ?only_fav=1) ----------
+        only_fav = request.user.is_authenticated and request.GET.get("only_fav") == "1"
+        if only_fav:
+            fav_ids = Favorite.objects.filter(user=request.user)\
+                                      .values_list("pokemon_id", flat=True)
+            qs = qs.filter(pokeapi_id__in=fav_ids)
+
+        # ---------- stránkovanie ----------
         raw_page = cd.get("page") or request.GET.get("page") or 1
         try:
             page_num = int(raw_page)
@@ -49,6 +64,7 @@ class PokemonListView(TemplateView):
         except (EmptyPage, PageNotAnInteger):
             page_obj = paginator.page(1)
 
+        # ---------- zachovanie querystringu (bez page) ----------
         params = request.GET.copy()
         params.pop("page", None)
         base_qs = params.urlencode()
@@ -61,5 +77,6 @@ class PokemonListView(TemplateView):
             "paginator": paginator,
             "total": paginator.count,
             "base_qs": base_qs,
+            "only_fav": only_fav,  # ak chceš použiť v UI
         }
         return render(request, self.template_name, ctx)

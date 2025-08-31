@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My favorites{% endblock %}
+
+{% block content %}
+<h1>My favorites</h1>
+
+{% if not items %}
+  <p>No favorites yet. Go to the <a href="{% url 'pokemon:pokemon_list' %}">Pokédex</a> and add some!</p>
+{% else %}
+  <div class="grid" id="fav-grid" data-dex-url="{% url 'pokemon:pokemon_list' %}">
+    {% for it in items %}
+      <div class="card">
+        <a class="card-link" href="{% url 'pokemon:pokemon_detail' it.id %}" aria-label="{{ it.name|title }}">
+          <img src="{{ it.sprite }}" alt="{{ it.name }}" loading="lazy">
+          <div class="dexno">#{{ it.id }}</div>
+          <div class="pname">{{ it.name|title }}</div>
+          <div class="types">
+            {% for t in it.types %}
+              <span class="type type-{{ t }}">{{ t }}</span>
+            {% endfor %}
+          </div>
+        </a>
+
+        <div class="row-actions" style="margin-top:.5rem;">
+          <button
+            class="btn-secondary js-fav"
+            data-id="{{ it.id }}"
+            data-remove="true"
+            type="button">Unfavorite</button>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module" src="{% static 'js/favorites-buttons.js' %}"></script>
+{% endblock %}

@@ -53,7 +53,7 @@
 
     {% if page_obj.has_next %}
       <a class="btn" href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ page_obj.next_page_number }}">Next ›</a>
-      <a class="btn" href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ page_obj.paginator.num_pages }}">Last »</a>
+      <a class="btn" href="?{% if base_qs %}{{ base_qs }}&{% endif %}page={{ page_obj.paginator_num_pages }}">Last »</a>
     {% else %}
       <span class="btn is-disabled" aria-disabled="true">Next ›</span>
       <span class="btn is-disabled" aria-disabled="true">Last »</span>
