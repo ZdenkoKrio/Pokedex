@@ -1,0 +1,7 @@
+  .tf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tf-card{border:1px solid #e5e7eb;border-radius:12px;padding:14px}
+  .slot-grid{display:grid;grid-template-columns:56px 1fr 1fr 90px;gap:8px;align-items:center}
+  .slot-label{font-weight:700;text-align:center}
+  .hint{color:#6b7280;font-size:.9rem}
+  .mini{font-size:.85rem;color:#6b7280}
+  .err{color:#b91c1c;font-size:.9rem}

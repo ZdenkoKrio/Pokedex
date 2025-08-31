@@ -1,0 +1,21 @@
+.team-header {
+    display:flex; justify-content:space-between; align-items:flex-start; gap:16px;
+    border:1px solid #e5e7eb; border-radius:12px; padding:16px; margin-bottom:16px;
+  }
+  .team-meta { color:#6b7280; font-size:.95rem; }
+  .chip { font-size:.8rem; padding:.15rem .5rem; border-radius:999px; border:1px solid #e5e7eb; }
+  .members-grid {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px;
+  }
+  .stat-row { display:grid; grid-template-columns:80px 1fr 40px; gap:8px; align-items:center; }
+  .stat-name { color:#6b7280; font-size:.85rem; }
+  .stat-bar {
+    --val: 0;
+    height:8px; border-radius:999px; background:#f1f5f9; position:relative; overflow:hidden;
+  }
+  .stat-bar::after {
+    content:""; position:absolute; left:0; top:0; bottom:0; width:calc(var(--val) * 1%);
+    background:#60a5fa;
+  }
+  .stat-num { text-align:right; font-variant-numeric:tabular-nums; font-size:.85rem; }
+  .section-title { margin:1rem 0 .5rem; }

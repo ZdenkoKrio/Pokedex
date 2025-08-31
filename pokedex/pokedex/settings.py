@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "core",
     "pokemon",
     "favorites",
+    "teams",
 ]
 
 MIDDLEWARE = [

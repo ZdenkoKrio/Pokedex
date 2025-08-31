@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if object %}Edit team{% else %}Create team{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/team-form.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom:.5rem;">{% if object %}Edit team{% else %}Create team{% endif %}</h1>
+<p class="mini" style="margin-top:0;">Fill basic info and assign up to 6 Pokémon.</p>
+
+<form method="post" novalidate>
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <div class="tf-grid" style="margin-bottom:12px;">
+    <div class="tf-card">
+      <div style="margin-bottom:.5rem;">
+        <label>Name</label>
+        {{ form.name }} {{ form.name.errors }}
+      </div>
+      <div style="margin-bottom:.5rem;">
+        <label>Description</label>
+        {{ form.description }} {{ form.description.errors }}
+      </div>
+      <div>
+        <label>Public</label>
+        {{ form.is_public }} {{ form.is_public.errors }}
+      </div>
+    </div>
+
+    <div class="tf-card">
+      <div class="hint" style="margin-bottom:.5rem;">
+        Tip: Pick quickly from your favorites or search by name/ID. The hidden
+        <code>pokemon_id</code> and <code>slot</code> fields will be filled for you.
+      </div>
+
+      {{ formset.management_form }}
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        {% for f in formset.forms %}
+          {# urč číslo slotu z existujúcich dát (fallback na forloop.counter) #}
+          {% with s=f.initial.slot|default:f.slot.value|default:forloop.counter %}
+          <div class="slot-grid" data-slot-num="{{ s }}">
+            <div class="slot-label">{{ s }}</div>
+
+            <div>
+              <label class="mini">From favorites</label>
+              <select
+                class="js-favpick"
+                data-target="id_{{ f.prefix }}-pokemon_id"
+                data-slot-target="id_{{ f.prefix }}-slot">
+                <option value="">— pick favorite —</option>
+                {% for it in fav_options %}
+                  <option value="{{ it.id }}"
+                          {% if f.pokemon_id.value == it.id|stringformat:"s" %}selected{% endif %}>
+                    #{{ it.id }} · {{ it.name|title }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div>
+              <label class="mini">Search by name / ID</label>
+              <input
+                type="text"
+                class="js-search"
+                list="pokemon-datalist"
+                placeholder="e.g. pikachu / 25"
+                data-target="id_{{ f.prefix }}-pokemon_id"
+                data-slot-target="id_{{ f.prefix }}-slot"
+                value="{% if f.pokemon_id.value %}{{ f.pokemon_id.value }}{% endif %}">
+              <div class="mini">Type a name, pick from list, or paste ID.</div>
+            </div>
+
+            <div>
+              <label class="mini">Delete</label>
+              {{ f.DELETE }}
+            </div>
+
+            {{ f.id }}
+
+            {{ f.slot.as_hidden }}
+            {{ f.pokemon_id.as_hidden }}
+
+            {% if f.pokemon_id.errors %}
+              <div class="err" style="grid-column:1/-1;">{{ f.pokemon_id.errors }}</div>
+            {% endif %}
+            {% if f.non_field_errors %}
+              <div class="err" style="grid-column:1/-1;">{{ f.non_field_errors }}</div>
+            {% endif %}
+          </div>
+          {% endwith %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:10px;">
+    <button class="btn-primary" type="submit">Save</button>
+    <a class="btn-secondary" href="{% url 'teams:list' %}">Cancel</a>
+  </div>
+
+  {{ pokemon_index|json_script:"pokemon-index" }}
+</form>
+
+<datalist id="pokemon-datalist">
+  {% for it in pokemon_index %}
+    <option value="{{ it.name }}">{{ it.id }}</option>
+  {% endfor %}
+</datalist>
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module" src="{% static 'js/team-form.js' %}"></script>
+{% endblock %}

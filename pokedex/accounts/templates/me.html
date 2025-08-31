@@ -4,43 +4,147 @@
 {% block title %}My profile{% endblock %}
 
 {% block content %}
-<h1>My profile</h1>
+<div class="profile-page" style="display:grid;grid-template-columns:160px 1fr;gap:24px;align-items:start;">
 
-<div style="display:flex; gap:24px; align-items:flex-start;">
-  <div>
-    {% if profile.avatar %}
-      <img src="{{ profile.avatar.url }}" alt="Avatar"
-           style="width:120px; height:120px; object-fit:cover; border-radius:50%;">
-    {% else %}
-      <div style="width:120px;height:120px;border-radius:50%;background:#eee;display:grid;place-items:center;">
-        No avatar
-      </div>
-    {% endif %}
-  </div>
+  {# --- Sidebar / Avatar --- #}
+  <aside>
+    <div class="avatar-wrap" style="width:140px;height:140px;border-radius:50%;overflow:hidden;background:#f3f4f6;display:grid;place-items:center;">
+      {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;">
+      {% else %}
+        <span style="opacity:.6;">No avatar</span>
+      {% endif %}
+    </div>
+  </aside>
 
-  <div style="flex:1;">
-    <p><b>Username:</b> {{ user.username }}</p>
-    {% if user.first_name or user.last_name %}
-      <p><b>Name:</b> {{ user.first_name }} {{ user.last_name }}</p>
-    {% endif %}
-    {% if user.email %}
-      <p><b>Email:</b> {{ user.email }}</p>
-    {% endif %}
-    {% if profile.display_name %}
-      <p><b>Display name:</b> {{ profile.display_name }}</p>
-    {% endif %}
-    {% if profile.bio %}
-      <p><b>Bio:</b><br>{{ profile.bio|linebreaksbr }}</p>
-    {% endif %}
+  {# --- Main content --- #}
+  <section>
 
-    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+    <header style="margin-bottom:8px;">
+      <h1 style="margin:0;">My profile</h1>
+      {% if profile.display_name %}
+        <div style="color:#6b7280;margin-top:4px;">Display name: <b>{{ profile.display_name }}</b></div>
+      {% endif %}
+    </header>
+
+    {# Action bar #}
+    <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 20px;">
       <a class="btn-primary" href="{% url 'accounts:edit' %}">Edit profile</a>
       <a class="btn-secondary" href="{% url 'accounts:password_change' %}">Change password</a>
       <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
-  {% csrf_token %}
-  <button type="submit" class="btn-secondary">Logout</button>
-</form>
+        {% csrf_token %}
+        <button type="submit" class="btn-secondary">Logout</button>
+      </form>
+    </div>
+
+    {# Info card #}
+    <div class="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-bottom:16px;">
+      <h2 style="margin:0 0 10px;">Account</h2>
+      <div style="display:grid;grid-template-columns:160px 1fr;row-gap:6px;column-gap:8px;">
+        <div style="color:#6b7280;">Username</div><div><b>{{ user.username }}</b></div>
+        {% if user.first_name or user.last_name %}
+          <div style="color:#6b7280;">Name</div><div>{{ user.first_name }} {{ user.last_name }}</div>
+        {% endif %}
+        {% if user.email %}
+          <div style="color:#6b7280;">Email</div><div>{{ user.email }}</div>
+        {% endif %}
+        {% if profile.bio %}
+          <div style="color:#6b7280;align-self:start;">Bio</div>
+          <div>{{ profile.bio|linebreaksbr }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Teams card #}
+    <div class="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;">
+        <h2 style="margin:0;">My teams</h2>
+        <div style="display:flex;gap:8px;">
+          <a class="btn-secondary" href="{% url 'teams:list' %}">Manage teams</a>
+          <a class="btn-primary" href="{% url 'teams:create' %}">+ New team</a>
+        </div>
+      </div>
+
+      {% if request.user.teams.all %}
+        <ul style="list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+          {% for t in request.user.teams.all|slice:":6" %}
+            <li style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;">
+              <a href="{% url 'teams:detail' t.pk %}" style="display:block;text-decoration:none;color:inherit;">
+                <div style="font-weight:600;margin-bottom:6px;">{{ t.name }}</div>
+                {% if t.description %}
+                  <div style="color:#6b7280;font-size:.95rem;margin-bottom:6px;">{{ t.description|truncatechars:120 }}</div>
+                {% endif %}
+                <div style="color:#6b7280;font-size:.9rem;">Members: <b>{{ t.members.count }}</b> / 6 · Visibility: {{ t.is_public|yesno:"Public,Private" }}</div>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+        {% if request.user.teams.count > 6 %}
+          <div style="margin-top:10px;">
+            <a class="btn-secondary" href="{% url 'teams:list' %}">Show all teams</a>
+          </div>
+        {% endif %}
+      {% else %}
+        <p style="margin:0;">No teams yet. Create your first team!</p>
+      {% endif %}
+    </div>
+
+    {# Favorites #}
+    <div class="card" style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;">
+    <h2 style="margin:0;">Favorites</h2>
+    <div style="display:flex;gap:8px;">
+      <a class="btn-secondary" href="{% url 'favorites:mine' %}">View all</a>
     </div>
   </div>
+
+  {% if favorites_preview %}
+    <div class="grid" style="margin-top:8px;">
+  {% for it in favorites_preview %}
+    <div class="card">
+      <a class="card-link" href="{% url 'pokemon:pokemon_detail' it.id %}" aria-label="{{ it.name|title }}">
+        <img src="{{ it.sprite }}" alt="{{ it.name }}" loading="lazy">
+        <div class="dexno">#{{ it.id }}</div>
+        <div class="pname">{{ it.name|title }}</div>
+        <div class="types">
+          {% for t in it.types %}
+            <span class="type type-{{ t }}">{{ t|capfirst }}</span>
+          {% endfor %}
+        </div>
+      </a>
+
+      <div class="row-actions" style="margin-top:.5rem;">
+        <button class="btn-secondary js-cmp" data-id="{{ it.id }}" type="button">Compare</button>
+
+        {% if request.user.is_authenticated %}
+          {# v náhľade sú to už favoriti, zobrazíme aktívny stav #}
+          <button class="btn-secondary js-fav is-active" data-id="{{ it.id }}" type="button">★ Favorite</button>
+        {% else %}
+          <a class="btn-secondary" href="{% url 'accounts:login' %}?next={{ request.path }}">★ Favorite</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
 </div>
+    {% if favorites_total and favorites_total > favorites_preview|length %}
+      <div style="margin-top:10px;">
+        <a class="btn-secondary" href="{% url 'favorites:mine' %}">
+          Show all ({{ favorites_total }})
+        </a>
+      </div>
+    {% endif %}
+  {% else %}
+    <p style="margin:0;color:#6b7280;">
+      No favorites yet. Browse the <a href="{% url 'pokemon:pokemon_list' %}">Pokédex</a> and add some!
+    </p>
+  {% endif %}
+</div>
+
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module" src="{% static 'js/compare-buttons.js' %}"></script>
+  <script type="module" src="{% static 'js/favorites-buttons.js' %}"></script>
 {% endblock %}

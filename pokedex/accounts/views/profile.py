@@ -4,7 +4,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import View
 from django.shortcuts import render, redirect
-
+from pokemon.utils.sprites import sprite_url_for_id
+from favorites.selectors import user_favorites_qs
 from accounts.forms import ProfileForm, UserForm
 
 
@@ -20,9 +21,20 @@ class ProfileDetailView(LoginRequiredMixin, View):
     template_name = "me.html"
 
     def get(self, request, *args, **kwargs):
+        # vezmeme prvých 6 obľúbencov na náhľad
+        fav_qs = user_favorites_qs(request.user).prefetch_related("types")[:6]
+        favorites_preview = [{
+            "id": p.pokeapi_id,
+            "name": p.name,
+            "sprite": sprite_url_for_id(p.pokeapi_id, "default"),
+            "types": [t.slug for t in p.types.all()],
+        } for p in fav_qs]
+
         return render(request, self.template_name, {
             "profile": request.user.profile,
             "user": request.user,
+            "favorites_preview": favorites_preview,
+            "favorites_total": user_favorites_qs(request.user).count(),
         })
 
 

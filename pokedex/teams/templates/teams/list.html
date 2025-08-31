@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}My teams{% endblock %}
+
+{% block content %}
+<h1>My teams</h1>
+<div style="margin-bottom:12px;">
+  <a class="btn-primary" href="{% url 'teams:create' %}">+ Create team</a>
+</div>
+
+{% if not teams %}
+  <p>No teams yet.</p>
+{% else %}
+  <div class="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;">
+    {% for t in teams %}
+      <a href="{% url 'teams:detail' t.pk %}"
+         class="card-link"
+         style="text-decoration:none;color:inherit;">
+        <div class="card" style="padding:12px;display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div style="font-weight:700;font-size:1.05rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+              {{ t.name }}
+            </div>
+            <span class="chip"
+                  style="font-size:.8rem;padding:.15rem .5rem;border-radius:999px;border:1px solid #e5e7eb;">
+              {% if t.is_public %}Public{% else %}Private{% endif %}
+            </span>
+          </div>
+
+          {# Thumbnails (max 6) #}
+          <div aria-label="Team members"
+               style="display:grid;grid-template-columns:repeat(6, 1fr);gap:6px;align-items:center;min-height:56px;">
+            {% if t.members.all %}
+              {% for m in t.members.all|slice:":6" %}
+                <div style="width:45px;height:45px;border-radius:8px;background:#f7f7f8;display:grid;place-items:center;border:1px solid #eee;">
+                  <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ m.pokemon_id }}.png"
+                       alt="#{{ m.pokemon_id }}"
+                       loading="lazy"
+                       style="width:45px;height:45px;image-rendering:pixelated;">
+                </div>
+              {% endfor %}
+            {% else %}
+              <div style="grid-column:1 / -1; color:#9ca3af; font-size:.95rem;">No members yet</div>
+            {% endif %}
+          </div>
+
+          <div style="display:flex;justify-content:space-between;color:#6b7280;font-size:.9rem;">
+            <span>Members: <b>{{ t.members.count }}</b> / 6</span>
+            <span>Updated: {{ t.updated_at|date:"Y-m-d" }}</span>
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

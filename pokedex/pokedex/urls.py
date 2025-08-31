@@ -9,6 +9,7 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path('pokedex/', include('pokemon.urls')),
     path('favorites/', include('favorites.urls')),
+    path('teams/', include('teams.urls')),
     path('admin/', admin.site.urls),
 ]
 

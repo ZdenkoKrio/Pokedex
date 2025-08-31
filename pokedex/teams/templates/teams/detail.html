@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load dict_extras %}
+
+{% block title %}{{ team.name }}{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/team-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+  <!-- Header -->
+  <div class="team-header">
+    <div>
+      <h1 style="margin:0;">{{ team.name }}</h1>
+      <div class="team-meta">
+        Owner: <b>{{ team.owner.username }}</b>
+        {% if not team.is_public %} · <span class="chip">Private</span>{% else %} · <span class="chip">Public</span>{% endif %}
+        · Updated: {{ team.updated_at|date:"Y-m-d" }}
+      </div>
+      <p style="margin:.5rem 0 0;">{{ team.description|default:"—" }}</p>
+    </div>
+    {% if request.user == team.owner %}
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a class="btn-secondary" href="{% url 'teams:edit' team.pk %}">Edit</a>
+        <a class="btn-secondary" href="{% url 'teams:delete' team.pk %}">Delete</a>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if not members %}
+    <p>Empty team.</p>
+  {% else %}
+
+    <!-- Radar chart -->
+    <h2 class="section-title">Team radar chart</h2>
+    <canvas id="teamChart" width="900" height="420"></canvas>
+
+    <!-- Members -->
+    <h2 class="section-title">Members</h2>
+    <div class="members-grid">
+      {% for m in members %}
+        <div class="card" style="padding:12px;">
+          <a class="card-link" href="{% url 'pokemon:pokemon_detail' m.id %}" aria-label="{{ m.name|title }}">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+              <img src="{{ m.sprite }}" alt="{{ m.name }}" loading="lazy" style="width:64px;height:64px;image-rendering:pixelated;">
+              <div>
+                <div class="pname" style="font-weight:700;">#{{ m.id }} · {{ m.name|title }}</div>
+              </div>
+            </div>
+          </a>
+
+          {% if m.stats %}
+            <div style="display:grid; gap:6px;">
+              {% for k in stats_keys %}
+                {% with val=m.stats|get:k|default:0 %}
+                  <div class="stat-row">
+                    <div class="stat-name">{{ k|upper }}</div>
+                    <div class="stat-bar" style="--val: {{ val|floatformat:0 }};"></div>
+                    <div class="stat-num">{{ val }}</div>
+                  </div>
+                {% endwith %}
+              {% endfor %}
+              {# BST sum #}
+              {% with total=0 %}
+                {% for k in stats_keys %}
+                  {% with v=m.stats|get:k|default:0 %}
+                    {% with total=total|add:v %}{% endwith %}
+                  {% endwith %}
+                {% endfor %}
+                <div class="stat-row" style="margin-top:4px;">
+                  <div class="stat-name"><b>SUM</b></div>
+                  <div class="stat-bar" style="--val: {{ total|floatformat:0 }};"></div>
+                  <div class="stat-num"><b>{{ total }}</b></div>
+                </div>
+              {% endwith %}
+            </div>
+          {% else %}
+            <p style="color:#6b7280;">No stats available.</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    {# JSON payload pre JS #}
+    {{ members|json_script:"team-members" }}
+    {{ stats_keys|json_script:"team-stats-keys" }}
+  {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script type="module" src="{% static 'js/team-detail.js' %}"></script>
+{% endblock %}
