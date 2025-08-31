@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit profile{% endblock %}
+
+{% block content %}
+<h1>Edit profile</h1>
+
+<div style="display:flex; gap:24px; align-items:flex-start;">
+  <div>
+    {% if profile.avatar %}
+      <img src="{{ profile.avatar.url }}" alt="Avatar"
+           style="width:120px; height:120px; object-fit:cover; border-radius:50%;">
+    {% else %}
+      <div style="width:120px;height:120px;border-radius:50%;background:#eee;display:grid;place-items:center;">
+        No avatar
+      </div>
+    {% endif %}
+  </div>
+
+  <form method="post" enctype="multipart/form-data" style="flex:1;">
+    {% csrf_token %}
+
+    {{ user_form.non_field_errors }}
+    {{ profile_form.non_field_errors }}
+
+    <fieldset style="margin-bottom:1rem;">
+      <legend>Account</legend>
+      <div>
+        <label>First name</label>
+        {{ user_form.first_name }} {{ user_form.first_name.errors }}
+      </div>
+      <div>
+        <label>Last name</label>
+        {{ user_form.last_name }} {{ user_form.last_name.errors }}
+      </div>
+      <div>
+        <label>Username</label>
+        {{ user_form.username }} {{ user_form.username.errors }}
+      </div>
+      <div>
+        <label>Email</label>
+        {{ user_form.email }} {{ user_form.email.errors }}
+      </div>
+    </fieldset>
+
+    <fieldset style="margin-bottom:1rem;">
+      <legend>Profile</legend>
+      <div>
+        <label>Display name</label>
+        {{ profile_form.display_name }} {{ profile_form.display_name.errors }}
+      </div>
+      <div>
+        <label>Bio</label>
+        {{ profile_form.bio }} {{ profile_form.bio.errors }}
+      </div>
+      <div>
+        <label>Avatar</label>
+        {{ profile_form.avatar }} {{ profile_form.avatar.errors }}
+      </div>
+      <div>
+        <label>Public profile</label>
+        {{ profile_form.is_public }} {{ profile_form.is_public.errors }}
+      </div>
+    </fieldset>
+
+    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button type="submit" class="btn-primary">Save changes</button>
+      <a class="btn-secondary" href="{% url 'accounts:me' %}">Back to profile</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

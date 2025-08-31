@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+<h1>Log in</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <div>
+    <label>Username</label>
+    {{ form.username }}
+    {{ form.username.errors }}
+  </div>
+  <div>
+    <label>Password</label>
+    {{ form.password }}
+    {{ form.password.errors }}
+  </div>
+  <button type="submit" class="btn-primary">Log in</button>
+
+  <p style="margin-top:.5rem;">
+    No account? <a href="{% url 'accounts:signup' %}">Sign up</a><br>
+    <a href="{% url 'accounts:password_reset' %}">Forgot password?</a>
+  </p>
+</form>
+{% endblock %}

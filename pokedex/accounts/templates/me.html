@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My profile{% endblock %}
+
+{% block content %}
+<h1>My profile</h1>
+
+<div style="display:flex; gap:24px; align-items:flex-start;">
+  <div>
+    {% if profile.avatar %}
+      <img src="{{ profile.avatar.url }}" alt="Avatar"
+           style="width:120px; height:120px; object-fit:cover; border-radius:50%;">
+    {% else %}
+      <div style="width:120px;height:120px;border-radius:50%;background:#eee;display:grid;place-items:center;">
+        No avatar
+      </div>
+    {% endif %}
+  </div>
+
+  <div style="flex:1;">
+    <p><b>Username:</b> {{ user.username }}</p>
+    {% if user.first_name or user.last_name %}
+      <p><b>Name:</b> {{ user.first_name }} {{ user.last_name }}</p>
+    {% endif %}
+    {% if user.email %}
+      <p><b>Email:</b> {{ user.email }}</p>
+    {% endif %}
+    {% if profile.display_name %}
+      <p><b>Display name:</b> {{ profile.display_name }}</p>
+    {% endif %}
+    {% if profile.bio %}
+      <p><b>Bio:</b><br>{{ profile.bio|linebreaksbr }}</p>
+    {% endif %}
+
+    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+      <a class="btn-primary" href="{% url 'accounts:edit' %}">Edit profile</a>
+      <a class="btn-secondary" href="{% url 'accounts:password_change' %}">Change password</a>
+      <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
+  {% csrf_token %}
+  <button type="submit" class="btn-secondary">Logout</button>
+</form>
+    </div>
+  </div>
+</div>
+{% endblock %}

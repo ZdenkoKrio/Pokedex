@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Sign up{% endblock %}
+
+{% block content %}
+<h1>Create account</h1>
+<form method="post" novalidate>
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  <div>
+    <label>Username</label>
+    {{ form.username }}
+    {{ form.username.errors }}
+  </div>
+  <div>
+    <label>Email</label>
+    {{ form.email }}
+    {{ form.email.errors }}
+  </div>
+  <div>
+    <label>Password</label>
+    {{ form.password1 }}
+    {{ form.password1.errors }}
+  </div>
+  <div>
+    <label>Confirm password</label>
+    {{ form.password2 }}
+    {{ form.password2.errors }}
+  </div>
+  <button type="submit" class="btn-primary">Sign up</button>
+  <p style="margin-top:.5rem;">Already have an account? <a href="{% url 'accounts:login' %}">Log in</a></p>
+</form>
+{% endblock %}
