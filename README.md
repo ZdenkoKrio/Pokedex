@@ -24,9 +24,7 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 
 # 2) nainštaluj závislosti
 pip install -U pip
-pip install -r requirements.txt  # ak súbor máš
-# (ak requirements.txt nemáš, aspoň:)
-# pip install "Django>=5.0,<6.0" requests
+pip install -r requirements.txt  
 
 # 3) migrácie
 python manage.py migrate
