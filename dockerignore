@@ -1,0 +1,23 @@
+# Python/venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+.venv/
+.env
+.env.*
+
+# Node (ak niečo máš)
+node_modules/
+
+# VCS/IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Build artefakty
+/staticfiles/
+media/
+dist/

@@ -1,0 +1,70 @@
+:root {
+  --bg: #f7f8fc;
+  --card: #ffffff;
+  --text: #1b1f2a;
+  --muted: #677084;
+  --border: rgba(0,0,0,.08);
+  --ring: rgba(122,167,255,.25);
+  --brand-a:#ffdf57;
+  --brand-b:#f2c400;
+  --shadow: 0 12px 28px rgba(0,0,0,.10);
+  --shadow-sm: 0 6px 18px rgba(0,0,0,.08);
+}
+
+html[data-theme="dark"] {
+  --bg:#0f1320;
+  --card:#151a2b;
+  --text:#e7e9f0;
+  --muted:#98a2c2;
+  --border:rgba(255,255,255,.08);
+  --ring:rgba(122,167,255,.22);
+  --shadow:0 12px 28px rgba(0,0,0,.40);
+  --shadow-sm:0 6px 18px rgba(0,0,0,.35);
+}
+
+/* use vars */
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(60rem 60rem at 120% -10%, rgba(255,215,64,.16), transparent 40%),
+    radial-gradient(60rem 60rem at -10% 120%, rgba(64,160,255,.13), transparent 40%),
+    var(--bg);
+  color:var(--text);
+}
+
+
+.container { max-width: 1080px; padding: 24px 16px; margin: 0 auto; }
+.appbar {
+  position: sticky; top: 0; z-index: 50;
+  background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.55));
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+html[data-theme="dark"] .appbar {
+  background: linear-gradient(180deg, rgba(21,26,43,.7), rgba(21,26,43,.5));
+}
+
+.appbar-inner { max-width:1080px; margin:0 auto; padding:10px 16px;
+  display:flex; gap:12px; align-items:center; justify-content:space-between; }
+.brand { display:flex; gap:10px; align-items:center; text-decoration:none; color:inherit; }
+.brand-mark {
+  width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+  background:
+    radial-gradient(circle at 30% 20%, #fff 0%, rgba(255,255,255,.35) 28%, transparent 29%),
+    linear-gradient(135deg, var(--brand-a), var(--brand-b));
+  box-shadow: var(--shadow-sm); font-weight:900; color:#0b1a33;
+}
+.brand-title { font-weight: 900; letter-spacing: .4px; }
+
+/* utilities */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); }
+.card-pad { padding: 16px; }
+.muted { color: var(--muted); }
+.btn {
+  display:inline-flex; align-items:center; gap:.5rem; padding:.55rem 1rem;
+  border-radius:999px; border:1px solid var(--border);
+  background:var(--card); font-weight:800; text-decoration:none;
+  transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); border-color: var(--ring); }
+.btn-primary { background: linear-gradient(135deg, var(--brand-a), var(--brand-b)); color:#0b1a33; border-color:#e6bf00; }

@@ -1,0 +1,11 @@
+  .teams-list{display:flex;flex-direction:column;gap:16px;margin-top:1rem}
+  .team-card{border:1px solid #e5e7eb;border-radius:14px;padding:14px;background:#fff}
+  .team-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .team-name{font-weight:700;font-size:1.05rem}
+  .team-meta{color:#6b7280;font-size:.9rem}
+  .team-pokes{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .poke-mini{width:50px;height:50px;border-radius:8px;background:#fafafa;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center}
+  .poke-mini img{width:40px;height:40px;image-rendering:pixelated}
+  .like-btn{display:inline-flex;align-items:center;gap:.4rem;border:1px solid #e5e7eb;background:#fff;border-radius:999px;padding:.25rem .6rem;cursor:pointer}
+  .like-btn.is-active{background:#fff7f7;border-color:#fca5a5}
+  .like-btn .cnt{font-weight:700}

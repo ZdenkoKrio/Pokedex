@@ -1,0 +1,13 @@
+.cmp-container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+.cmp-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.cmp-card { border:1px solid rgba(0,0,0,.08); border-radius:14px; padding:12px; text-align:center; background:#fff;
+            box-shadow:0 6px 18px rgba(0,0,0,.06); }
+.cmp-sprite { width:96px; height:96px; object-fit:contain; }
+.cmp-name { font-weight:800; margin-top:.5rem; }
+.cmp-types { display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin:.25rem 0 .5rem; }
+.cmp-meta { display:flex; justify-content:center; gap:12px; font-weight:700; }
+.table-wrap { overflow:auto; }
+.cmp-table { width:100%; border-collapse: collapse; background:#fff; }
+.cmp-table th, .cmp-table td { border:1px solid #eee; padding:.45rem .6rem; text-align:center; }
+.cmp-table th { background:#f8fafc; font-weight:800; }
+.btn-secondary { padding:.45rem .8rem; border-radius:999px; border:1px solid #cfe0ff; background:#eef3ff; font-weight:800; }

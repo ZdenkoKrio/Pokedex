@@ -1,0 +1,85 @@
+/* --- Toolbar + layout --- */
+.toolbar {
+  position: sticky; top: 0; z-index: 5; backdrop-filter: blur(8px);
+  background: rgba(255,255,255,.65); border: 1px solid rgba(0,0,0,.06);
+  border-radius: 14px; padding: .75rem 1rem; margin-bottom: 1rem;
+}
+
+.grid {
+  display: grid; gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+a.card-link { text-decoration: none; color: inherit; }
+
+/* --- Card --- */
+.card {
+  position: relative; border-radius: 16px; padding: 14px; text-align: center;
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  background: linear-gradient(180deg, rgba(255,255,255,.95) 0%, rgba(255,255,255,.82) 100%);
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.12);
+  border-color: rgba(0,0,0,.12);
+}
+.dexno { font-size: .9rem; opacity: .8; }
+.pname { font-weight: 700; letter-spacing: .2px; margin-top: .2rem; }
+.thumb, .card img { width: 88px; height: 88px; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,.15)); }
+
+/* --- Type badges --- */
+.types { display:flex; gap:6px; justify-content:center; flex-wrap: wrap; margin-top:.5rem; }
+.type {
+  padding: .15rem .5rem; border-radius: 999px; font-size: .75rem; font-weight: 700;
+  color: #fff; text-shadow: 0 1px 0 rgba(0,0,0,.15);
+  border: 1px solid rgba(255,255,255,.28);
+}
+
+/* --- Card gradient accents by primary type --- */
+.card.type-fire     { background: linear-gradient(180deg, #fff6f2 0%, #ffe9e0 100%); }
+.card.type-water    { background: linear-gradient(180deg, #f2f8ff 0%, #e3f0ff 100%); }
+.card.type-grass    { background: linear-gradient(180deg, #f4fff6 0%, #e5ffe9 100%); }
+.card.type-electric { background: linear-gradient(180deg, #fffcee 0%, #fff6cc 100%); }
+.card.type-ice      { background: linear-gradient(180deg, #f2fdff 0%, #e0faff 100%); }
+.card.type-fighting { background: linear-gradient(180deg, #fff3f5 0%, #ffe3e8 100%); }
+.card.type-poison   { background: linear-gradient(180deg, #fbf2ff 0%, #f2e4ff 100%); }
+.card.type-ground   { background: linear-gradient(180deg, #fff8ee 0%, #f7e8cf 100%); }
+.card.type-flying   { background: linear-gradient(180deg, #f7fbff 0%, #eef6ff 100%); }
+.card.type-psychic  { background: linear-gradient(180deg, #fff2f8 0%, #ffe0ef 100%); }
+.card.type-bug      { background: linear-gradient(180deg, #f8fff2 0%, #ecffd6 100%); }
+.card.type-rock     { background: linear-gradient(180deg, #fdf9f4 0%, #f2e7d7 100%); }
+.card.type-ghost    { background: linear-gradient(180deg, #f6f2ff 0%, #ebe6ff 100%); }
+.card.type-dragon   { background: linear-gradient(180deg, #f2f6ff 0%, #e0e8ff 100%); }
+.card.type-dark     { background: linear-gradient(180deg, #f6f6f8 0%, #ececf0 100%); }
+.card.type-steel    { background: linear-gradient(180deg, #f7fafd 0%, #edf3f8 100%); }
+.card.type-fairy    { background: linear-gradient(180deg, #fff4fb 0%, #ffe8f7 100%); }
+
+/* Badge fill colors */
+.type-fire     { background:#f08030; }
+.type-water    { background:#6890f0; }
+.type-grass    { background:#78c850; }
+.type-electric { background:#f8d030; color:#3a3000; text-shadow:none; }
+.type-ice      { background:#98d8d8; color:#0d3d3d; text-shadow:none; }
+.type-fighting { background:#c03028; }
+.type-poison   { background:#a040a0; }
+.type-ground   { background:#e0c068; color:#3a2b00; text-shadow:none; }
+.type-flying   { background:#a890f0; }
+.type-psychic  { background:#f85888; }
+.type-bug      { background:#a8b820; }
+.type-rock     { background:#b8a038; }
+.type-ghost    { background:#705898; }
+.type-dragon   { background:#7038f8; }
+.type-dark     { background:#705848; }
+.type-steel    { background:#b8b8d0; color:#1a1a2b; text-shadow:none; }
+.type-fairy    { background:#ee99ac; }
+
+/* --- Pagination --- */
+.pager { margin-top:1rem; display:flex; gap:.5rem; align-items:center; justify-content:center; }
+.btn {
+  display:inline-block; padding:.45rem .8rem; border-radius:999px; font-weight:700; font-size:.9rem;
+  border:1px solid rgba(0,0,0,.1); background:#fff; transition: all .12s ease;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,.1); }
+.btn.is-disabled { opacity:.45; pointer-events:none; }
