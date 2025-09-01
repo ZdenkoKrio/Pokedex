@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "pokemon",
     "favorites",
     "teams",
+    "community",
 ]
 
 MIDDLEWARE = [

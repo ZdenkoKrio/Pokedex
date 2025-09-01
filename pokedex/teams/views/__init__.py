@@ -4,7 +4,6 @@ from .form import TeamCreateView, TeamUpdateView
 from .delete import TeamDeleteView
 from .mixins import OwnerRequiredMixin, TeamPickHelpersMixin
 
-
 __all__ = [
     "TeamListView",
     "TeamDetailView",

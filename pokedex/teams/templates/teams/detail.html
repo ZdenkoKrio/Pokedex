@@ -28,6 +28,30 @@
       </div>
     {% endif %}
   </div>
+<div class="team-meta">
+  Owner: <b>{{ team.owner.username }}</b>
+  {% if not team.is_public %} · <span class="chip">Private</span>{% else %} · <span class="chip">Public</span>{% endif %}
+  · Updated: {{ team.updated_at|date:"Y-m-d" }}
+</div>
+
+<div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+  {% if request.user == team.owner %}
+    <a class="btn-secondary" href="{% url 'teams:edit' team.pk %}">Edit</a>
+    <a class="btn-secondary" href="{% url 'teams:delete' team.pk %}">Delete</a>
+  {% endif %}
+
+  {% if user.is_authenticated %}
+    <button
+      class="like-btn js-like {% if team.is_liked %}is-active{% endif %}"
+      data-like-url="{% url 'community:team_like_toggle' team.id %}">
+      👍 <span class="cnt">{{ team.likes_count|default:0 }}</span>
+    </button>
+  {% else %}
+    <a class="like-btn" href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}">
+      👍 <span class="cnt">{{ team.likes_count|default:0 }}</span>
+    </a>
+  {% endif %}
+</div>
 
   {% if not members %}
     <p>Empty team.</p>

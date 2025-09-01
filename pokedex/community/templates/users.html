@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Users{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/community-users.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="users-wrap">
+  <h1 style="margin:0;">Users</h1>
+  <form method="get" class="users-search" role="search" aria-label="Filter users">
+    <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Search username…" />
+    <button class="btn-primary" type="submit">Filter</button>
+    {% if request.GET.q %}
+      <a class="btn-link" href=".">Reset</a>
+    {% endif %}
+  </form>
+</div>
+
+{% if not users %}
+  <p>No users yet.</p>
+{% else %}
+  <div class="users-grid">
+    {% for u in users %}
+      <div class="u-card">
+        <div class="u-ava" aria-hidden="true">
+          {# Show avatar if you store it on profile; otherwise fallback initial #}
+          {% if u.profile and u.profile.avatar %}
+            <img src="{{ u.profile.avatar.url }}" alt="" />
+          {% else %}
+            {{ u.username|first|upper }}
+          {% endif %}
+        </div>
+
+        <div class="u-main">
+          <div class="u-name">
+            <a href="{% url 'community:user_detail' u.id %}">@{{ u.username }}</a>
+            <span class="chip">{{ u.public_teams|default:0 }} public teams</span>
+          </div>
+          {% if u.profile and u.profile.display_name %}
+            <div class="u-dname">{{ u.profile.display_name }}</div>
+          {% endif %}
+          <div class="u-meta">
+            <a class="btn-link" href="{% url 'community:user_detail' u.id %}">View profile</a>
+            <a class="btn-link" href="{% url 'community:teams' %}?owner={{ u.id }}">View teams</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

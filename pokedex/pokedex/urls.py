@@ -10,6 +10,7 @@ urlpatterns = [
     path('pokedex/', include('pokemon.urls')),
     path('favorites/', include('favorites.urls')),
     path('teams/', include('teams.urls')),
+    path('community/', include('community.urls')),
     path('admin/', admin.site.urls),
 ]
 

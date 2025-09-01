@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Teams{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/community-teams.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1 style="margin-bottom:.5rem;">Teams</h1>
+
+{% if not teams %}
+  <p>No public teams yet.</p>
+{% else %}
+  <div class="teams-grid">
+    {% for t in teams %}
+      <div class="team-card" data-team="{{ t.id }}">
+        <div class="team-head">
+          <div class="title-row">
+            <a href="{% url 'teams:detail' t.pk %}" class="team-name">{{ t.name }}</a>
+            <span class="chip">{% if t.is_public %}Public{% else %}Private{% endif %}</span>
+          </div>
+
+          {% if user.is_authenticated %}
+            <button
+              class="like-btn js-like {% if t.is_liked %}is-active{% endif %}"
+              data-like-url="{% url 'community:team_like_toggle' t.id %}">
+              <span>👍</span>
+              <span class="cnt">{{ t.likes_count|default:0 }}</span>
+            </button>
+          {% else %}
+            <a class="like-btn" href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}">
+              👍 <span class="cnt">{{ t.likes_count|default:0 }}</span>
+            </a>
+          {% endif %}
+        </div>
+
+        <div class="team-meta">by
+          <a href="{% url 'community:user_detail' t.owner_id %}">@{{ t.owner.username }}</a>
+        </div>
+
+        <div class="thumb-grid" aria-label="Team members">
+          {% for m in t.members_preview %}
+            <div class="thumb">
+              <img src="{{ m.sprite }}" alt="#{{ m.id }}" loading="lazy">
+              <div class="pn">#{{ m.id }}{% if m.name %} · {{ m.name|title }}{% endif %}</div>
+            </div>
+          {% empty %}
+            <div class="thumb" style="grid-column:1/-1;justify-content:center;color:#9ca3af;">
+              This team has no members yet.
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="card-foot">
+          <span>Members: <b>{{ t.members.count }}</b> / 6</span>
+          <span>Updated: {{ t.updated_at|date:"Y-m-d" }}</span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module" src="{% static 'js/likes.js' %}"></script>
+{% endblock %}

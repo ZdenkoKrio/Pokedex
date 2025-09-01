@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}@{{ profile_user.username }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/community-user-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>@{{ profile_user.username }}</h1>
+
+<h2 style="margin-top:1rem;">Public teams</h2>
+
+{% if teams %}
+  <div class="teams-list">
+    {% for t in teams %}
+      <div class="team-card" data-team="{{ t.id }}">
+        <div class="team-head">
+          <div class="team-name"><a href="{% url 'teams:detail' t.pk %}">{{ t.name }}</a></div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <div class="team-meta">Members: {{ t.members.count }} / 6</div>
+            {% if user.is_authenticated %}
+              <button
+                class="like-btn js-like {% if t.is_liked %}is-active{% endif %}"
+                data-like-url="{% url 'community:team_like_toggle' t.id %}">
+                <span>👍</span>
+                <span class="cnt">{{ t.likes_count|default:0 }}</span>
+              </button>
+            {% else %}
+              <a class="like-btn" href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}">
+                👍 <span class="cnt">{{ t.likes_count|default:0 }}</span>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="team-pokes">
+          {% for m in t.members.all|slice:":6" %}
+            <div class="poke-mini">
+              <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ m.pokemon_id }}.png" alt="#{{ m.pokemon_id }}" loading="lazy">
+            </div>
+          {% empty %}
+            {% for _ in "123456" %}
+              <div class="poke-mini">–</div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>No public teams.</p>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+  <script type="module" src="{% static 'js/likes.js' %}"></script>
+{% endblock %}
