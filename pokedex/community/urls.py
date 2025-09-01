@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PublicUsersView, PublicTeamsView, PublicUserDetailView, team_like_toggle
+from .views import *
 
 
 app_name = "community"
@@ -9,4 +9,7 @@ urlpatterns = [
     path("teams/", PublicTeamsView.as_view(), name="teams"),
 
     path("teams/<int:team_id>/like/", team_like_toggle, name="team_like_toggle"),
+
+    path("teams/<int:team_id>/comments/", comment_create, name="comment_create"),
+    path("comments/<int:comment_id>/delete/", comment_delete, name="comment_delete"),
 ]

@@ -8,6 +8,7 @@ from django.views.generic import TemplateView
 
 from teams.models import Team
 from community.models import TeamLike
+from community.selectors import comments_for_team
 from pokemon.models import PokemonCache
 from pokemon.utils.sprites import sprite_url_for_id
 
@@ -136,6 +137,12 @@ class TeamDetailView(TemplateView):
 
         members, stats_keys = self.build_members_and_stats(team)
         like_meta = self.build_like_meta(team)
+
+        ctx["comments"] = list(comments_for_team(team.id))
+        ctx["can_moderate_comments"] = (
+                self.request.user.is_authenticated and
+                self.request.user.groups.filter(name="community_admins").exists()
+        )
 
         ctx[self.context_object_name] = team
         ctx["members"] = members

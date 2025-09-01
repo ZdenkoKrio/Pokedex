@@ -1,6 +1,16 @@
 from django.db.models import Count, Exists, OuterRef, QuerySet
 from teams.models import Team
 from .models import TeamLike
+from .models import TeamComment
+
+
+def comments_for_team(team_id: int) -> QuerySet[TeamComment]:
+    return (
+        TeamComment.objects
+        .select_related("author")
+        .filter(team_id=team_id)
+        .order_by("-created_at")
+    )
 
 
 def public_teams_qs(for_user=None) -> QuerySet[Team]:

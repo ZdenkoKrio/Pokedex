@@ -111,9 +111,44 @@
     {{ members|json_script:"team-members" }}
     {{ stats_keys|json_script:"team-stats-keys" }}
   {% endif %}
+
+{# --- Comments --- #}
+<h2 class="section-title">Comments</h2>
+
+{% if user.is_authenticated %}
+  <form id="comment-form" class="comment-form" data-post-url="{% url 'community:comment_create' team.id %}">
+    {% csrf_token %}
+    <textarea id="comment-body" name="body" rows="3" placeholder="Write a comment..." required></textarea>
+    <div style="margin-top:6px;">
+      <button class="btn-primary" type="submit">Post</button>
+    </div>
+  </form>
+{% else %}
+  <p><a href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}">Log in</a> to comment.</p>
+{% endif %}
+
+{% comment %} team detail - comments block {% endcomment %}
+<ul id="comment-list" class="comment-list">
+  {% for c in comments %}
+    <li data-id="{{ c.id }}">
+      <div class="c-head">
+        <a href="{% url 'community:user_detail' c.author_id %}">@{{ c.author.username }}</a>
+        <span class="when">{{ c.created_at|date:"Y-m-d H:i" }}</span>
+        {% if perms.community.can_moderate_comments %}
+          <button class="c-del js-del" data-del-url="{% url 'community:comment_delete' c.id %}">Delete</button>
+        {% endif %}
+      </div>
+      <div class="c-body">{{ c.body|linebreaksbr }}</div>
+    </li>
+  {% empty %}
+    <li class="empty">No comments yet.</li>
+  {% endfor %}
+</ul>
 {% endblock %}
 
 {% block extra_js %}
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script type="module" src="{% static 'js/team-detail.js' %}"></script>
+ <script type="module" src="{% static 'js/comments.js' %}"></script>
+ <script type="module" src="{% static 'js/likes.js' %}"></script>
 {% endblock %}

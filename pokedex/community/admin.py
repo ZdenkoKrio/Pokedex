@@ -1,9 +1,16 @@
-# community/admin.py
 from django.contrib import admin
-from .models import TeamLike
+from .models import TeamLike, TeamComment
+
+
+@admin.register(TeamComment)
+class TeamCommentAdmin(admin.ModelAdmin):
+    list_display = ("id", "team", "author", "created_at")
+    list_filter = ("created_at",)
+    search_fields = ("body", "author__username", "team__name")
+
 
 @admin.register(TeamLike)
 class TeamLikeAdmin(admin.ModelAdmin):
-    list_display = ("team", "user", "created_at")
-    search_fields = ("team__name", "user__username")
+    list_display = ("id", "team", "user", "created_at")
     list_filter = ("created_at",)
+    search_fields = ("user__username", "team__name")
