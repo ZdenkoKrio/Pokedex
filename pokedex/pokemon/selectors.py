@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import List, Dict, Optional
 from django.db.models import Q
 from pokemon.models import PokemonCache
-from pokemon.services.sync.pokemon import upsert_pokemon_from_api
+from pokemon.services.cache.pokemon import upsert_pokemon_from_api
 
 __all__ = ["list_pokemon", "evo_display_from_ids"]
 
