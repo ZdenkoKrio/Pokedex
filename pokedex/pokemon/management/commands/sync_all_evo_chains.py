@@ -14,7 +14,7 @@ from django.core.management.base import BaseCommand
 
 from pokemon.utils.progress import ProgressPrinter
 from pokemon.orchestration.runner import SyncRunner
-from pokemon.services.sync.evo import sync_all_evo_chains
+from pokemon.services.cache.evo import sync_all_evo_chains
 
 
 class Command(BaseCommand):

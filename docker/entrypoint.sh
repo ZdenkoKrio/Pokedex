@@ -1,21 +1,21 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env sh
+set -e
 
-if [ -n "${DATABASE_URL:-}" ]; then
-  echo "DATABASE_URL je nastavené, preskakujem wait-for-db (predpokladá sa cloud DB)."
-else
-  echo "Čakám na Postgres na db:5432…"
-  until nc -z db 5432; do
-    sleep 0.5
-  done
-fi
+# Migrácie pred štartom (SQLite – žiadne čakanie na DB netreba)
+echo "→ Running migrations"
+python pokedex/manage.py migrate --noinput
 
-echo "→ python manage.py migrate"
-python manage.py migrate --noinput
+# Static files – ak máš nastavený STATIC_ROOT, toto ich nahrá
+echo "→ Collecting static files"
+python pokedex/manage.py collectstatic --noinput --clear || true
 
-echo "→ python manage.py collectstatic"
-python manage.py collectstatic --noinput --clear
+echo "→ Collecting pokemon api data"
+python pokedex/manage.py sync_everything || true
 
-echo "→ gunicorn pokedex.wsgi:application"
-exec gunicorn pokedex.wsgi:application \
-  --config /app/docker/gunicorn.conf.py
+
+echo "→ Create admin_moderate group"
+python pokedex/manage.py setup_comment_moderators || true
+
+# Spusti zvyšok (CMD z Dockerfile)
+echo "→ Starting server"
+exec "$@"

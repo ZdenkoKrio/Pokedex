@@ -8,6 +8,7 @@ services:
     env_file:
       - .env
     ports:
-      - "8020:8000"   # -> http://localhost:8020
+      - "8020:8000"              # -> http://localhost:8020
     volumes:
-      - .:/app
+      - .:/app                   # Dev pohodlie: hot-reload a db.sqlite3 zostáva u teba v projekte
+    # Ak nechceš hot-reload, volume vypusti.
