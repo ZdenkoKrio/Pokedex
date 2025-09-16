@@ -1,0 +1,17 @@
+{% if varieties_strip and varieties_strip|length > 1 %}
+  <div class="panel">
+    <h3 style="margin:0 0 10px 0;">Forms & Varieties</h3>
+    <div class="forms-strip">
+      {% for f in varieties_strip %}
+        <a class="form-card {% if f.active %}is-active{% endif %}"
+           href="{% url 'pokemon:pokemon_detail' f.id %}">
+          <div class="form-thumb"><img src="{{ f.sprite }}" alt="{{ f.name }}" loading="lazy"></div>
+          <div class="form-name">
+            {{ f.name|title }}
+            {% if f.is_default %}<span class="form-chip">Default</span>{% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

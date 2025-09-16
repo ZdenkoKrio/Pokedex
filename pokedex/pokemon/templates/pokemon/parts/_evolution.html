@@ -1,0 +1,17 @@
+{% if evolution_chain and evolution_chain|length %}
+  <div class="evo">
+    <div class="evo-title">Evolution Chain</div>
+    <div class="evo-list">
+      {% for e in evolution_chain %}
+        <a class="evo-item" href="{% url 'pokemon:pokemon_detail' e.id %}">
+          <img class="evo-sprite"
+               src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ e.id }}.png"
+               alt="{{ e.name }}" loading="lazy">
+          <div class="evo-name">{{ e.name|title }}</div>
+          <div class="evo-id">#{{ e.id }}</div>
+        </a>
+        {% if not forloop.last %}<div class="arrow" aria-hidden="true">→</div>{% endif %}
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

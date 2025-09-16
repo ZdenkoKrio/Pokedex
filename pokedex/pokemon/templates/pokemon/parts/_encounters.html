@@ -1,0 +1,19 @@
+{% load string_extras %}
+
+{% if encounters %}
+  <div class="panel">
+    <h3 style="margin:0 0 10px 0;">Encounters</h3>
+    <div class="enc-grid">
+      {% for e in encounters %}
+        <div class="enc-card">
+          <div class="enc-title">{{ e.location_area|replace:"-, "|title }}</div>
+          <div class="enc-vers">
+            {% for v in e.versions %}
+              <span>{{ v.version|title }}{% if not forloop.last %}, {% endif %}</span>
+            {% empty %}<span>—</span>{% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

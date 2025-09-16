@@ -1,0 +1,48 @@
+{% load sprites %}
+<div class="dex-header">
+  <div class="sprite-wrap">
+      <h1>#{{ p.pokeapi_id }} {{ p.name|title }}</h1>
+    <img class="sprite"
+         src="{{ p.pokeapi_id|sprite_url:sprite_mode }}"
+         alt="{{ p.name }}"
+         loading="lazy"
+         onerror="this.onerror=null; this.src='{{ p.pokeapi_id|sprite_url:'default' }}'">
+
+    <div class="switch" role="tablist" aria-label="Sprite set" style="margin-top:6px;">
+      <a class="chip" href="?sprite=default"
+         aria-current="{% if sprite_mode == 'default' or sprite_mode == 'classic' %}true{% else %}false{% endif %}">
+        Classic
+      </a>
+      <a class="chip" href="?sprite=shiny"
+         aria-current="{% if sprite_mode == 'shiny' %}true{% else %}false{% endif %}">
+        Shiny
+      </a>
+      <a class="chip" href="?sprite=animated"
+         aria-current="{% if sprite_mode == 'animated' %}true{% else %}false{% endif %}">
+        Animated
+      </a>
+      <a class="chip" href="?sprite=artwork"
+         aria-current="{% if sprite_mode == 'artwork' %}true{% else %}false{% endif %}">
+        Artwork
+      </a>
+    </div>
+  </div>
+
+  <div class="actions" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    <button class="btn-secondary js-cmp" data-id="{{ p.pokeapi_id }}" type="button">Compare</button>
+    <a class="btn-primary" href="{% url 'pokemon:compare' %}">Open comparison</a>
+
+    {% if request.user.is_authenticated %}
+      <button class="btn-primary js-fav {% if is_fav %}is-active{% endif %}"
+              data-id="{{ p.pokeapi_id }}"
+              type="button">
+        ★ Favorite — #{{ p.pokeapi_id }} {{ p.name|title }}
+      </button>
+    {% else %}
+      <a class="btn-primary"
+         href="{% url 'accounts:login' %}?next={{ request.path }}">
+        ★ Favorite
+      </a>
+    {% endif %}
+  </div>
+</div>

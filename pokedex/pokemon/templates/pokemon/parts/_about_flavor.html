@@ -1,0 +1,50 @@
+<div class="panel">
+  <h3 style="margin:0 0 10px 0;">About</h3>
+  <div class="meta">
+    {% if flavor_entries %}
+      <div class="panel">
+        <div class="flavor-head"><h3>Pokédex Flavor</h3></div>
+
+        <div id="flavorCarousel"
+             class="flavor-box"
+             data-active="{{ flavor_active|default_if_none:'' }}"
+             data-species="{{ p.pokeapi_id }}">
+          {% for f in flavor_entries %}
+            <article class="flavor-slide" data-version="{{ f.version }}"
+                     {% if f.version != flavor_active %}hidden{% endif %}>
+              <div class="flavor-text">“{{ f.text }}”</div>
+              <div class="flavor-meta">— {{ f.version|title }}</div>
+            </article>
+          {% endfor %}
+        </div>
+
+        {% if flavor_entries|length > 1 %}
+  <div class="flavor-nav">
+    {% for f in flavor_entries %}
+      <button type="button"
+              class="dot {% if f.version == flavor_active %}is-active{% endif %}"
+              data-version="{{ f.version }}"
+              title="{{ f.version|title }}"
+              aria-label="Show {{ f.version|title }}">
+        <span class="dot-label">{{ f.version|title }}</span>
+      </button>
+    {% endfor %}
+  </div>
+{% endif %}
+      </div>
+    {% endif %}
+
+    <div class="item"><div class="label">Genus</div><div class="value">{{ species.genera|default:"—" }}</div></div>
+    <div class="item"><div class="label">Region</div><div class="value">{{ species.region|default:"—" }}</div></div>
+    <div class="item"><div class="label">Growth rate</div><div class="value">{{ species.growth_rate|default:"—" }}</div></div>
+    <div class="item"><div class="label">Base happiness</div><div class="value">{{ species.base_happiness|default:"—" }}</div></div>
+    <div class="item"><div class="label">Capture rate</div><div class="value">{{ species.capture_rate|default:"—" }}</div></div>
+    <div class="item">
+      <div class="label">Egg groups</div>
+      <div class="value">{% if species.egg_groups %}{{ species.egg_groups|join:", " }}{% else %}—{% endif %}</div>
+    </div>
+    <div class="item"><div class="label">Habitat</div><div class="value">{{ species.habitat|default:"—" }}</div></div>
+    <div class="item"><div class="label">Color</div><div class="value">{{ species.color|default:"—" }}</div></div>
+    <div class="item"><div class="label">Shape</div><div class="value">{{ species.shape|default:"—" }}</div></div>
+  </div>
+</div>

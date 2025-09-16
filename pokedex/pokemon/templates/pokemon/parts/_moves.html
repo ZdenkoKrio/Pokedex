@@ -1,0 +1,45 @@
+{% load string_extras %}
+
+<div class="panel">
+  <div class="panel-head-row">
+    <h3>Moves</h3>
+
+    {% if moves_vgs and moves_vgs|length > 1 %}
+      <form method="get" class="vg-form">
+        {% if request.GET.sprite %}
+          <input type="hidden" name="sprite" value="{{ request.GET.sprite }}">
+        {% endif %}
+        <label class="mini" for="vg">Version group:</label>
+        <select id="vg" name="vg" onchange="this.form.submit()">
+          {% for vg in moves_vgs %}
+            <option value="{{ vg }}" {% if vg == moves_active_vg %}selected{% endif %}>
+              {{ vg|replace:"-, "|title }}
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+    {% endif %}
+  </div>
+
+  {% for g in moves_groups %}
+    {% if g.items and g.items|length %}
+      <details class="moves-section" {% if g.key == "level-up" %}open{% endif %}>
+        <summary class="moves-summary">{{ g.key|title }} ({{ g.items|length }})</summary>
+        <div class="moves-grid">
+          {% for m in g.items %}
+            <div class="move-pill">
+              <div class="move-name">{{ m.name|replace:"-, "|title }}</div>
+              <div class="move-meta">
+                {% if g.key == "level-up" %}<span>Lv {{ m.level|default:"—" }}</span>{% endif %}
+                {% if m.type %}<span>Type: {{ m.type|title }}</span>{% endif %}
+                {% if m.damage_class %}<span>{{ m.damage_class|title }}</span>{% endif %}
+                {% if m.power %}<span>Power: {{ m.power }}</span>{% endif %}
+                {% if m.accuracy %}<span>Acc: {{ m.accuracy }}%</span>{% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </details>
+    {% endif %}
+  {% endfor %}
+</div>

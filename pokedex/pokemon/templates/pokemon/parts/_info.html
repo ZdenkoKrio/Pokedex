@@ -1,0 +1,21 @@
+<div class="panel">
+  <h3 style="margin:0 0 10px 0;">Info</h3>
+  <div class="meta">
+    <div class="item">
+      <div class="label">Abilities</div>
+      <div class="value">
+        {% for a in p.abilities.all %}
+          {{ a.name }}{% if not forloop.last %}, {% endif %}
+        {% empty %} — {% endfor %}
+      </div>
+    </div>
+    <div class="item">
+      <div class="label">Types</div>
+      <div class="value">
+        {% for t in p.types.all %}
+          {{ t.name }}{% if not forloop.last %}, {% endif %}
+        {% empty %} — {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>

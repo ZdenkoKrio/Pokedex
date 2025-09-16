@@ -1,0 +1,14 @@
+<div class="panel">
+  <h3 style="margin:0 0 10px 0;">Base Stats</h3>
+  <div class="stats">
+    {% for k, v in p.base_stats.items %}
+      <div class="stat-row">
+        <div class="stat-name">{{ k|upper }}</div>
+        <div class="stat-bar" style="--val: {{ v|default:0 }};"></div>
+        <div class="stat-num">{{ v }}</div>
+      </div>
+    {% empty %}
+      <p>—</p>
+    {% endfor %}
+  </div>
+</div>
