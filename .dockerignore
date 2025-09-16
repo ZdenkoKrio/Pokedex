@@ -1,23 +1,19 @@
-# Python/venv
+.git
+.gitignore
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.pytest_cache/
-.venv/
+*.sqlite3
+*.db
 .env
 .env.*
-
-# Node (ak niečo máš)
 node_modules/
-
-# VCS/IDE
-.git/
-.gitignore
-.vscode/
-.idea/
-
-# Build artefakty
-/staticfiles/
+staticfiles/
 media/
 dist/
+.build/
+.mypy_cache/
+.pytest_cache/
+.vscode/
+.idea/
